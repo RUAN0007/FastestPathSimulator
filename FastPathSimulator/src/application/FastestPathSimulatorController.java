@@ -41,6 +41,7 @@ public class FastestPathSimulatorController implements Initializable{
 	@FXML
 	Label turnCountLabel;
 	
+	
 	@FXML
 	Rectangle demoCell;
 	
