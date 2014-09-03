@@ -17,7 +17,6 @@ public class Main extends Application {
 			FastestPathSimulatorController myController = (FastestPathSimulatorController)loader.getController();
 			myController.setStage(primaryStage);
 			Scene scene = new Scene(root);
-
 			primaryStage.setScene(scene);
 			
 			primaryStage.show();

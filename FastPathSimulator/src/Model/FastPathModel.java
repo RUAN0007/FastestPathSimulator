@@ -80,9 +80,8 @@ public class FastPathModel {
 		this.currentStatus = new Cell[arenaMap.getRowCount()][arenaMap.getColumnCount()];
 		if(!computeFastestPath()){
 			throw new SimulatorException(2, "No Path can be found");
-
 		}
-		
+		updateStatus();
 	}
 
 	private boolean obstacleInArea(int lowerLeftRowID,
@@ -91,7 +90,7 @@ public class FastPathModel {
 		for(int rowID = 0;rowID < span;rowID++){
 			for(int colID = 0;colID < span;colID++){
 				if(this.arenaMap.getCells()
-						[rowID - lowerLeftRowID][colID + lowerLeftColID] 
+						[lowerLeftRowID - rowID][lowerLeftColID + colID] 
 						== ArenaTemplate.CellState.OBSTACLE){
 					return true;
 				}

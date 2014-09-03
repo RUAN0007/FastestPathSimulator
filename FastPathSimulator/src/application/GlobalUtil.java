@@ -11,7 +11,7 @@ public class GlobalUtil {
 									 "XXXI","XXXII","XXXIII","XXXIV","XXXV",
 									 "XXXVI","XXXVII","XXXVIII","XXXIX","XXXX"
 									};
-	public static int rowCount = 20;
+	public static int rowCount = 30;
 	public static int columnCount = 15;
 	public static int robotDiameterInCellNumber = 3;
 	
@@ -21,6 +21,6 @@ public class GlobalUtil {
 	public static int lowerLeftGoalRowIndex = robotDiameterInCellNumber - 1;
 	public static int lowerLeftGoalColIndex = columnCount - robotDiameterInCellNumber;
 	
-	public static int indexFont = 15;
+	public static int indexFont = rowCount / 2;
 	
 }

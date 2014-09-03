@@ -20,6 +20,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -41,7 +42,7 @@ public class FastestPathSimulatorController implements Initializable{
 	private static Color EMPTY_COLOR = Color.WHITE;
 	private static Color ROBOT_COLOR = Color.BLUE;
 	private static Color DIRECTION_COLOR = Color.RED;
-	private static Color PATH_COLOR = Color.VIOLET;
+	private static Color PATH_COLOR = Color.AQUA;
 	private static Color UNEXPLORED_COLOR = Color.GRAY;
 	
 	@FXML
@@ -89,6 +90,8 @@ public class FastestPathSimulatorController implements Initializable{
 	
 	private Stage stage;
 	
+	private Rectangle[][] recs;
+
 	public void setStage(Stage stage){
 		this.stage = stage;
 	}
@@ -99,17 +102,17 @@ public class FastestPathSimulatorController implements Initializable{
 		backwardButton.setDisable(true);
 		resetButton.setDisable(true);
 		
+		secondsPerStepChoiceBox.getItems().add("0.5");
 		secondsPerStepChoiceBox.getItems().add("1");
 		secondsPerStepChoiceBox.getItems().add("2");
-		secondsPerStepChoiceBox.getItems().add("3");
-		secondsPerStepChoiceBox.getItems().add("5");
+
 		secondsPerStepChoiceBox.setValue("1");
 		addBlocks();
 	}
 	
 	
 	private void addBlocks() {
-		
+		recs = new Rectangle[GlobalUtil.rowCount][GlobalUtil.columnCount];
 		double blockWidth = arena.getPrefWidth() / (GlobalUtil.columnCount + 1) * 0.9;
 		double blockHeight = arena.getPrefHeight() / (GlobalUtil.rowCount + 1) * 0.9;
 		
@@ -151,7 +154,9 @@ public class FastestPathSimulatorController implements Initializable{
 		for(int rowIndex = 1; rowIndex <= GlobalUtil.rowCount;rowIndex++){
 			for(int colIndex = 1; colIndex <= GlobalUtil.columnCount;colIndex++){
 				Rectangle rec = new Rectangle(blockWidth, blockHeight);
-				rec.setId("" + (rowIndex - 1) + "Block" + (colIndex - 1));
+			//	rec.setId("" + (rowIndex - 1) + "Block" + (colIndex - 1));
+				rec.setFill(UNEXPLORED_COLOR);
+				recs[rowIndex - 1][colIndex - 1] = rec;
 				rec.setArcHeight(20);
 				rec.setArcWidth(20);
 				arena.add(rec,colIndex, rowIndex);
@@ -212,6 +217,7 @@ public class FastestPathSimulatorController implements Initializable{
 		for(int rowID = 0;rowID < rowCount; rowID++){
 			for(int colID = 0;colID < colCount;colID++){
 				Rectangle rectToPaint = getRectangle(rowID,colID);
+				assert(rectToPaint != null);
 				Cell cellModel = this.model.getCellStatus(rowID, colID);
 				paintRectBasedOnStatus(rectToPaint,cellModel);
 			}
@@ -246,7 +252,9 @@ public class FastestPathSimulatorController implements Initializable{
 		}
 	}
 	private Rectangle getRectangle(int rowID, int colID) {
-		return (Rectangle) this.arena.getScene().lookup("" + rowID + "Block" + colID);
+		//System.out.println("" + rowID + "Block" + colID);
+	//	return (Rectangle) this.scene.lookup("" + rowID + "Block" + colID);
+		return recs[rowID][colID];
 	}
 	
 	 
@@ -305,6 +313,12 @@ public class FastestPathSimulatorController implements Initializable{
   		double cellHeight = this.arena.getPrefHeight() / (GlobalUtil.rowCount + 1);
   		int rowIndex = (int)((yCdn - arenaYCdn) / cellHeight);
   		rowIndex--;
+  		if(rowIndex < 0){
+  			return 0;
+  		}
+  		if(rowIndex >= GlobalUtil.rowCount){
+  			return GlobalUtil.rowCount - 1;
+  		}
   		return rowIndex;
   		
   }
@@ -331,7 +345,7 @@ public class FastestPathSimulatorController implements Initializable{
 		  	this.cellTypeLabel.setText("ROBOT");
 			
 		}else if(cell == Cell.ROBOT_DIRECTION){
-		  	this.cellTypeLabel.setText("ROBOT_DIRECTION");
+		  	this.cellTypeLabel.setText("DIRECTION");
 			
 		}else if(cell == Cell.PATH){
 		  	this.cellTypeLabel.setText("PATH");
@@ -344,6 +358,14 @@ public class FastestPathSimulatorController implements Initializable{
 		double cellWidth = this.arena.getWidth() / (GlobalUtil.columnCount + 1);
 		int columnIndex = (int)((xCdn - arenaXCdn) / cellWidth);
 		columnIndex--;
+		
+		if(columnIndex < 0){
+			return 0;
+		}
+		if(columnIndex >= GlobalUtil.columnCount){
+			return GlobalUtil.columnCount - 1;
+		}
+		
 		return columnIndex;
 		
   }
@@ -402,7 +424,8 @@ public class FastestPathSimulatorController implements Initializable{
 			startpausedButton.setText("Pause");
 			
 			timer = new Timer();
-			int secondPerStep = Integer.parseInt(this.secondsPerStepChoiceBox.getValue());
+			double secondPerStep = Double.parseDouble(this.secondsPerStepChoiceBox.getValue());
+			long millisecondPerStep = (long)( 1000 * secondPerStep);
 			timer.scheduleAtFixedRate(new TimerTask() {
 				
 				@Override
@@ -424,7 +447,7 @@ public class FastestPathSimulatorController implements Initializable{
 					}); //End of runLater() method
 					
 				}//End of run() in TimerTask
-			}, 1000, 1000 * secondPerStep);
+			}, 1000,  millisecondPerStep);
 			
 		}else{
 			//Pause button is pressed
@@ -437,10 +460,10 @@ public class FastestPathSimulatorController implements Initializable{
 		startpausedButton.setText("Start");
 		this.resetButton.setDisable(false);
 		if(model.hasNextStep()){
-			this.forwardButton.setDisable(true);
+			this.forwardButton.setDisable(false);
 		}
 		if(model.hasPreStep()){
-			this.backwardButton.setDisable(true);
+			this.backwardButton.setDisable(false);
 		}
 		
 	}
