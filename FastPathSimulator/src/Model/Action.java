@@ -49,4 +49,20 @@ public class Action {
 			return dir;
 		}
 	}
+
+	public static Action opposite(Action action) {
+		// TODO Auto-generated method stub
+		
+		if(action.equals(Action.TURN_LEFT)){
+			return Action.TURN_RIGHT;
+		}else if(action.equals(Action.TURN_RIGHT)){
+			return Action.TURN_LEFT;
+		}else if(action.equals(Action.MOVE_FORWARD)){
+			return Action.DRAW_BACK;
+		}else if(action.equals(Action.DRAW_BACK)){
+			return Action.MOVE_FORWARD;
+		}else{
+			return null;
+		}
+	}
 }

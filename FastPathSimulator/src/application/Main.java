@@ -14,7 +14,8 @@ public class Main extends Application {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("FastestPathView.fxml"));
 			Parent root = (Parent)loader.load();
-			
+			FastestPathSimulatorController myController = (FastestPathSimulatorController)loader.getController();
+			myController.setStage(primaryStage);
 			Scene scene = new Scene(root);
 
 			primaryStage.setScene(scene);
