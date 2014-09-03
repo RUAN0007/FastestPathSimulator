@@ -2,6 +2,8 @@ package Model;
 
 import java.util.ArrayList;
 
+import Model.ArenaTemplate.CellState;
+
 public class FastPathModel {
 	
 	public enum Cell {
@@ -75,8 +77,8 @@ public class FastPathModel {
 		this.startDirection = startDirection;
 		
 		this.robot = new Robot(lowerLeftStartRowID, lowerLeftStartColID, robotDiameterInCellCount,startDirection);
-		
-		if(computeFastestPath()){
+		this.currentStatus = new Cell[arenaMap.getRowCount()][arenaMap.getColumnCount()];
+		if(!computeFastestPath()){
 			throw new SimulatorException(2, "No Path can be found");
 
 		}
@@ -161,9 +163,139 @@ public class FastPathModel {
 	}
 	
 	private void updateStatus(){
-		//TODO
-		//Update the current map status based on the executed action from [0 actionIndex-1]
 		
+		updateForArenaMap();
+		updateForRobot();
+		updateForPath();
+	}
+
+	private void updateForPath() {
+		Direction direction = this.startDirection;
+		int lowerLeftRowID = this.lowerLeftStartRowID;
+		int lowerLeftColID = this.lowerLeftStartColID;
+		int robotDiameterInCellNum = this.robot.getDiameterInCellNum();
+		
+		for(int actID = 0;actID < this.actionIndex;actID++){
+			Action act = this.fastestPath.get(actID);
+			
+			if((direction.equals(Direction.UP) && act.equals(Action.MOVE_FORWARD))
+					||(direction.equals(Direction.DOWN) && act.equals(Action.DRAW_BACK))){
+				
+				//MOVE UPWARD
+				int rowID = lowerLeftRowID;
+				int colID = lowerLeftColID;
+				for(int offset = 0;offset < robotDiameterInCellNum; offset++){
+					this.currentStatus[rowID][colID + offset] =  Cell.PATH;
+				}
+				lowerLeftRowID--;
+			}else if((direction.equals(Direction.UP) && act.equals(Action.DRAW_BACK))
+					||(direction.equals(Direction.DOWN) && act.equals(Action.MOVE_FORWARD))){
+				
+				//MOVE DOWNWARD
+				//Draw the DIRECTION CELL at the top of robot
+				int rowID = lowerLeftRowID - robotDiameterInCellNum + 1;
+				int colID = lowerLeftColID;
+
+				for(int offset = 0;offset < robotDiameterInCellNum; offset++){
+					this.currentStatus[rowID][colID + offset] =  Cell.PATH;
+				}
+				lowerLeftRowID++;
+			}else if((direction.equals(Direction.LEFT) && act.equals(Action.MOVE_FORWARD))
+					||(direction.equals(Direction.RIGHT) && act.equals(Action.DRAW_BACK))){
+				
+				//MOVE TO LEFT	
+				//Draw the path on right side of the robot
+				int rowID = lowerLeftRowID;
+				int colID = lowerLeftColID + robotDiameterInCellNum - 1;
+
+				for(int offset = 0;offset < robotDiameterInCellNum; offset++){
+					this.currentStatus[rowID - offset][colID] =  Cell.PATH;
+				}
+				lowerLeftColID--;
+			}else if((direction.equals(Direction.LEFT) && act.equals(Action.DRAW_BACK))
+					||(direction.equals(Direction.RIGHT) && act.equals(Action.MOVE_FORWARD))){
+				
+				//MOVE TO RIGHT	
+				//Draw the path on left side of the robot
+				int rowID = lowerLeftRowID;
+				int colID = lowerLeftColID;
+
+				for(int offset = 0;offset < robotDiameterInCellNum; offset++){
+					this.currentStatus[rowID - offset][colID] =  Cell.PATH;
+				}
+				lowerLeftColID++;
+			}
+			
+			direction = act.directionAfterAction(direction);
+		}
+	}
+
+	private void updateForRobot() {
+		int robotDiameterInCellNum = this.robot.getDiameterInCellNum();
+		int cellRowIndex, cellColIndex;
+		for(int rowOffset = 0;rowOffset < robotDiameterInCellNum;rowOffset++){
+			cellRowIndex = this.robot.getLowerLeftRowIndex() - rowOffset;
+			for(int colOffset = 0;colOffset < robotDiameterInCellNum;colOffset++){
+				cellColIndex = this.robot.getLowerLeftColIndex() + colOffset;
+				
+				assert(this.currentStatus[cellRowIndex][cellColIndex] != Cell.OBSTACLE);
+				this.currentStatus[cellRowIndex][cellColIndex] = Cell.ROBOT;		
+			}
+		}
+		
+		//Draw the Direction Cell
+		
+		if(this.robot.getCurrentDirection().equals(Direction.LEFT)){
+		
+			cellRowIndex = this.robot.getLowerLeftRowIndex();
+			cellColIndex = this.robot.getLowerLeftColIndex();
+
+			for(int offset = 0;offset < robotDiameterInCellNum;offset++){
+				this.currentStatus[cellRowIndex][cellColIndex] = Cell.ROBOT_DIRECTION;
+				cellRowIndex --;
+			}
+		}else if(this.robot.getCurrentDirection().equals(Direction.RIGHT)){
+		
+			cellRowIndex = this.robot.getLowerLeftRowIndex();
+			cellColIndex = this.robot.getLowerLeftColIndex() + robotDiameterInCellNum - 1;
+			
+			for(int offset = 0;offset < robotDiameterInCellNum;offset++){
+				this.currentStatus[cellRowIndex][cellColIndex] = Cell.ROBOT_DIRECTION;
+				cellRowIndex --;
+			}
+		}else if(this.robot.getCurrentDirection().equals(Direction.UP)){
+			cellRowIndex = this.robot.getLowerLeftRowIndex() - robotDiameterInCellNum + 1;
+			cellColIndex = this.robot.getLowerLeftColIndex();
+
+			for(int offset = 0;offset < robotDiameterInCellNum;offset++){
+				this.currentStatus[cellRowIndex][cellColIndex] = Cell.ROBOT_DIRECTION;
+				cellColIndex ++;
+			}
+			
+		}else if(this.robot.getCurrentDirection().equals(Direction.DOWN)){
+			cellRowIndex = this.robot.getLowerLeftRowIndex();
+			cellColIndex = this.robot.getLowerLeftColIndex();
+
+			for(int offset = 0;offset < robotDiameterInCellNum;offset++){
+				this.currentStatus[cellRowIndex][cellColIndex] = Cell.ROBOT_DIRECTION;
+				cellColIndex ++;
+			}
+		}
+		
+	}
+
+	private void updateForArenaMap() {
+		for(int rowID = 0;rowID < this.arenaMap.getRowCount();rowID++){
+			for(int colID = 0;colID < this.arenaMap.getColumnCount();colID++){
+				if(this.arenaMap.getCells()[rowID][colID] == CellState.OBSTACLE){
+					this.currentStatus[rowID][colID] = Cell.OBSTACLE;
+				}else if(this.arenaMap.getCells()[rowID][colID] == CellState.EMPTY){
+					this.currentStatus[rowID][colID] = Cell.EMPTY;
+				}else{
+					assert(false):"This arena should not contain any UNEXPLORED CELL";
+				}
+			}
+		}
 	}
 	
 	public int getCurrentTurnCount(){
@@ -193,6 +325,7 @@ public class FastPathModel {
 		this.robot.setLowerLeftRowIndex(lowerLeftStartRowID);
 		this.robot.setLowerLeftColIndex(lowerLeftStartColID);
 		this.actionIndex = 0;
+		this.updateStatus();
 	}
 	
 }
