@@ -361,6 +361,10 @@ public class FastestPathSimulatorController implements Initializable{
 		}else if(cell == Cell.PATH){
 		  	this.cellTypeLabel.setText("PATH");
 			
+		}else if(cell == Cell.GOAL){
+			this.cellTypeLabel.setText("GOAL");
+		}else if(cell == Cell.START){
+			this.cellTypeLabel.setText("START");
 		}
   }
 //return a value between [0,GlobalUtil.columnCount - 1]
