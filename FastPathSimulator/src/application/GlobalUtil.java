@@ -11,7 +11,7 @@ public class GlobalUtil {
 									 "XXXI","XXXII","XXXIII","XXXIV","XXXV",
 									 "XXXVI","XXXVII","XXXVIII","XXXIX","XXXX"
 									};
-	public static int rowCount = 30;
+	public static int rowCount = 20;
 	public static int columnCount = 15;
 	public static int robotDiameterInCellNumber = 3;
 	

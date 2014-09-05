@@ -44,6 +44,8 @@ public class FastestPathSimulatorController implements Initializable{
 	private static Color DIRECTION_COLOR = Color.RED;
 	private static Color PATH_COLOR = Color.AQUA;
 	private static Color UNEXPLORED_COLOR = Color.GRAY;
+	private static Color START_COLOR = Color.ALICEBLUE;
+	private static Color GOAL_COLOR = Color.ANTIQUEWHITE;
 	
 	@FXML
 	GridPane arena;
@@ -249,6 +251,10 @@ public class FastestPathSimulatorController implements Initializable{
 			
 		}else if(cellModel == Cell.EMPTY){
 			rectToPaint.setFill(EMPTY_COLOR);
+		}else if(cellModel == Cell.START){
+			rectToPaint.setFill(START_COLOR);
+		}else if(cellModel == Cell.GOAL){
+			rectToPaint.setFill(GOAL_COLOR);
 		}
 	}
 	private Rectangle getRectangle(int rowID, int colID) {

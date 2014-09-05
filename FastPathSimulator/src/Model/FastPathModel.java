@@ -12,7 +12,9 @@ public class FastPathModel {
 		ROBOT,
 		ROBOT_DIRECTION,
 		UNEXMPLORED,
-		PATH
+		PATH,
+		START,
+		GOAL
 	}
 	
 	public class SimulatorException extends Exception{
@@ -164,8 +166,31 @@ public class FastPathModel {
 	private void updateStatus(){
 		
 		updateForArenaMap();
-		updateForRobot();
 		updateForPath();
+		updateForStart();
+		updateForGoal();
+		updateForRobot();
+
+	}
+
+	private void updateForGoal() {
+		int robotDiameterInCellNum = this.robot.getDiameterInCellNum();
+		for(int rowID = 0; rowID < robotDiameterInCellNum; rowID++){
+			for(int colID = 0;colID < robotDiameterInCellNum; colID++){
+				this.currentStatus[lowerLeftGoalRowID - rowID][ lowerLeftGoalColID + colID]
+						= Cell.GOAL;
+			}
+		}
+	}
+
+	private void updateForStart() {
+		int robotDiameterInCellNum = this.robot.getDiameterInCellNum();
+		for(int rowID = 0; rowID < robotDiameterInCellNum; rowID++){
+			for(int colID = 0;colID < robotDiameterInCellNum; colID++){
+				this.currentStatus[lowerLeftStartRowID - rowID][lowerLeftStartColID + colID]
+						= Cell.START;
+			}
+		}
 	}
 
 	private void updateForPath() {
