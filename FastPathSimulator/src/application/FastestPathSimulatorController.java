@@ -313,20 +313,25 @@ public class FastestPathSimulatorController implements Initializable{
   		double cellHeight = this.arena.getPrefHeight() / (GlobalUtil.rowCount + 1);
   		int rowIndex = (int)((yCdn - arenaYCdn) / cellHeight);
   		rowIndex--;
-  		if(rowIndex < 0){
-  			return 0;
-  		}
-  		if(rowIndex >= GlobalUtil.rowCount){
-  			return GlobalUtil.rowCount - 1;
-  		}
+
   		return rowIndex;
   		
   }
   
   private void updateCellStateDisplay(int rowIndex, int columnIndex) {
-	  	Cell cell = this.model.getCellStatus(rowIndex, columnIndex);
-	  	paintRectBasedOnStatus(this.demoCell, cell);
-	  	updateDemoLabel(cell);
+	  
+	  if((0 <= rowIndex && rowIndex <= GlobalUtil.rowCount - 1 ) &&
+			     (0 <= columnIndex && columnIndex <= GlobalUtil.columnCount - 1)){
+			Cell cell = this.model.getCellStatus(rowIndex, columnIndex);
+		  	paintRectBasedOnStatus(this.demoCell, cell);
+		  	updateDemoLabel(cell);
+		}else{
+			this.cellTypeLabel.setText("---");
+			this.demoCell.setFill(UNEXPLORED_COLOR);
+		}
+	  
+	  
+	  
 	}
   
   
@@ -358,13 +363,6 @@ public class FastestPathSimulatorController implements Initializable{
 		double cellWidth = this.arena.getWidth() / (GlobalUtil.columnCount + 1);
 		int columnIndex = (int)((xCdn - arenaXCdn) / cellWidth);
 		columnIndex--;
-		
-		if(columnIndex < 0){
-			return 0;
-		}
-		if(columnIndex >= GlobalUtil.columnCount){
-			return GlobalUtil.columnCount - 1;
-		}
 		
 		return columnIndex;
 		
