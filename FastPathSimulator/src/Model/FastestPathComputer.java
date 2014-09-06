@@ -8,7 +8,7 @@ import Model.FastPathModel.Cell;
 public abstract class FastestPathComputer {
 	
 	
-	protected abstract ArrayList<Action> compute(Integer[][]map,int rowCount,int colCount,
+	public abstract ArrayList<Action> compute(Integer[][]map,int rowCount,int colCount,
 							int startRowID,int startColID,Direction startDirection,
 							int goalRowID,int goalColID);
 	

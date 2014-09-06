@@ -4,9 +4,6 @@ import java.util.ArrayList;
 
 public class MinStepTurnPathComputer extends FastestPathComputer {
 	
-	private int turnWeight;
-	private int stepWeight;
-	
 	private static int DIR_NULL = -1;
 	private static int DIR_MIN = 0;
 	private static int UP_INDEX = 0;
@@ -14,6 +11,12 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 	private static int DOWN_INDEX = 2;
 	private static int LEFT_INDEX = 3;
 	private static int DIR_MAX = 3;
+	
+	
+	
+	private int turnWeight;
+	private int stepWeight;
+	
 	
 	public MinStepTurnPathComputer(int turnWeight, int stepWeight) {
 		super();
@@ -24,7 +27,7 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 
 
 	@Override
-	protected ArrayList<Action> compute(Integer[][] map, int rowCount, int colCount,
+	public ArrayList<Action> compute(Integer[][] map, int rowCount, int colCount,
 			int startRowID, int startColID, Direction startDirection,
 			int goalRowID, int goalColID) {
 //		Integer mapWithDrc[][][] = new Integer[rowCount][colCount][Direction.DirectionCount];
@@ -49,20 +52,19 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 		
 		int startDrcID = IndexOfDirection(startDirection);
 		distance[startRowID][startColID][startDrcID] = 0;
-
+		int goalDrcID = DIR_NULL;
 		while(true){
 			int minRowID = -1;
 			int minColID = -1;
 			int minDrcID = DIR_NULL;
 			int minDist = Integer.MAX_VALUE;
 			boolean foundMin = false;
+			
 			for(int rowID = 0;rowID < rowCount ; rowID++){
 				for(int colID = 0;colID < colCount;colID++){
-					if(map[rowID][colID].equals(new Integer(1))){
-						continue;
-					}
 					for(int drcID = DIR_MIN;drcID <= DIR_MAX;drcID ++){
-						if(distance[rowID][colID][drcID] < minDist){
+						if(!explored[rowID][colID][drcID] && 
+								distance[rowID][colID][drcID] < minDist){
 							minRowID = rowID;
 							minColID = colID;
 							minDrcID = drcID;
@@ -74,15 +76,31 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 			}//End of loop on rows
 			
 
-			if(!foundMin) break;
+			if(!foundMin) return null;
 			
 			assert(!explored[minRowID][minColID][minDrcID]);
 			explored[minRowID][minColID][minDrcID] = true;
+			//All the directions at goal state has been explored
+			int minDistForDrcOnGoal = Integer.MAX_VALUE;
+			for(int drcID = DIR_MIN;drcID <= DIR_MAX;drcID ++){
+				if(!explored[goalRowID][goalColID][drcID]){
+					goalDrcID = DIR_NULL;
+					break;
+				}else{
+					if(distance[goalRowID][goalColID][drcID] < minDistForDrcOnGoal){
+						minDistForDrcOnGoal = distance[goalRowID][goalColID][drcID];
+						goalDrcID = drcID;
+					}
+				}
+				
+			}//END of loop on direction
+			if(goalDrcID != DIR_NULL) break;
+			
 			
 			//Update its three adjacent node
 			
 			//Update the first adjacent node
-			int leftDirectionID = (minDrcID + DIR_MAX) / (DIR_MAX + 1);
+			int leftDirectionID = (minDrcID + DIR_MAX) % (DIR_MAX + 1);
 			if(!explored[minRowID][minColID][leftDirectionID] &&
 					distance[minRowID][minColID][leftDirectionID]
 							> distance[minRowID][minColID][minDrcID] + turnWeight){
@@ -93,7 +111,7 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 			}
 			
 			//Update the second adjacent node
-			int rightDirectionID = (minDrcID + 1) / (DIR_MAX + 1);
+			int rightDirectionID = (minDrcID + 1) % (DIR_MAX + 1);
 			if(!explored[minRowID][minColID][rightDirectionID] &&
 					distance[minRowID][minColID][rightDirectionID]
 							> distance[minRowID][minColID][minDrcID] + turnWeight){
@@ -111,48 +129,42 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 				adjacentRowID--;
 			}else if(minDrcID == DOWN_INDEX){
 				adjacentRowID++;
-			}else if(minDrcID == RIGHT_INDEX){
-				adjacentColID++;
-			}else{
-				//Left Direction
+			}else if(minDrcID == LEFT_INDEX){
 				adjacentColID--;
+			}else{
+				//RIGHT Direction
+				adjacentColID++;
 			}
-			if(!explored[adjacentRowID][adjacentColID][minDrcID] &&
-					distance[adjacentRowID][adjacentColID][minDrcID] >
-						distance[minRowID][minColID][minDrcID] + stepWeight){
-				distance[adjacentRowID][adjacentColID][minDrcID] =
-				distance[minRowID][minColID][minDrcID] + stepWeight;
-				preAction[adjacentRowID][adjacentColID][minDrcID] = Action.MOVE_FORWARD;
+			if(0 <= adjacentRowID && adjacentRowID < rowCount &&
+					0 <= adjacentColID && adjacentColID < colCount){
+				if(!explored[adjacentRowID][adjacentColID][minDrcID] &&
+						distance[adjacentRowID][adjacentColID][minDrcID] >
+							distance[minRowID][minColID][minDrcID] + stepWeight){
+					distance[adjacentRowID][adjacentColID][minDrcID] =
+							distance[minRowID][minColID][minDrcID] + stepWeight;
+					preAction[adjacentRowID][adjacentColID][minDrcID] = Action.MOVE_FORWARD;
+				}
 			}
+			
 
 		}// END of infinite WHILE
 		
 		
-		if(!explored[goalRowID][goalColID][DIR_MIN]){
-			for(int drcID = DIR_MIN;drcID <= DIR_MAX;drcID ++){
-				assert(preAction[goalRowID][goalColID][drcID] == null);
-			}//END of loop on direction		
-			return null;
-		}
-		
-		int minDistanceToGoal = Integer.MAX_VALUE;
-		int dirIDWithMinDistanceAtGoal = DIR_NULL;
 		for(int drcID = DIR_MIN;drcID <= DIR_MAX;drcID ++){
-			if(distance[goalRowID][goalColID][drcID] < minDistanceToGoal){
-				distance[goalRowID][goalColID][drcID] = minDistanceToGoal;
-				dirIDWithMinDistanceAtGoal = drcID;
-			}
-			
-		}//END of loop on direction
+			assert(explored[goalRowID][goalColID][drcID]);
+			assert(preAction[goalRowID][goalColID][drcID] != null);
+		}//END of loop on direction		
+	
+		
 		
 		
 		return findPathsFromActionMap(preAction,
 									goalRowID,
 									goalColID,
-									dirIDWithMinDistanceAtGoal,
-									startRowID,
-									startColID,
-									startDrcID
+									goalDrcID
+//									startRowID,
+//									startColID,
+//									startDrcID
 									);
 		
 	}
@@ -163,8 +175,8 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 	//TODO
 	//Remove the last three parameters for testing
 	private ArrayList<Action> findPathsFromActionMap(Action[][][] preAction,
-			int goalRowID, int goalColID, int goalDrcID,
-			int startRowID,int startColID,int startDrcID) {
+			int goalRowID, int goalColID, int goalDrcID) {
+			//int startRowID,int startColID,int startDrcID) {
 		
 		ArrayList<Action> actions = new ArrayList<>();
 		//Find the action min distance
@@ -176,10 +188,10 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 			Action currentAction = preAction[rowID][colID][drcID];
 			actions.add(0, currentAction);
 			if(currentAction.equals(Action.TURN_LEFT)){
-				 drcID = (drcID + 1) / (DIR_MAX + 1);
+				 drcID = (drcID + 1) % (DIR_MAX + 1);
 
 			}else if(currentAction.equals(Action.TURN_RIGHT)){
-				drcID = (drcID + DIR_MAX) / (DIR_MAX + 1);
+				drcID = (drcID + DIR_MAX) % (DIR_MAX + 1);
 
 			}else{
 				//currentAction == MOVE_FORWARD
@@ -187,16 +199,16 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 					rowID++;
 				}else if(drcID == DOWN_INDEX){
 					rowID--;
-				}else if(drcID == RIGHT_INDEX){
-					colID--;
-				}else{
-					//Left Direction
+				}else if(drcID == LEFT_INDEX){
 					colID++;
+				}else{
+					//RIGHT Direction
+					colID--;
 				}
 				
 			}
 		}
-		assert(rowID == startRowID && colID == startColID && drcID == startDrcID);
+	//	assert(rowID == startRowID && colID == startColID && drcID == startDrcID);
 
 		return actions;
 	}
