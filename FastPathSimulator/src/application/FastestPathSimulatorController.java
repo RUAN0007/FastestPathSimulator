@@ -209,6 +209,7 @@ public class FastestPathSimulatorController implements Initializable{
 		this.startpausedButton.setDisable(false);
 		this.forwardButton.setDisable(false);
 		this.resetButton.setDisable(false);
+		this.msgLabel.setText("Start");
 		refleshView();
 		
 	}
@@ -397,9 +398,11 @@ public class FastestPathSimulatorController implements Initializable{
 		if(GlobalUtil.ViewDEBUG){
 			System.out.println("onBackwardPressed");
 		}
-		this.model.backward();
+		String actionDescription = this.model.backward();
+		this.msgLabel.setText(actionDescription);
 		refleshView();
 		if(!this.model.hasPreStep()){
+			this.msgLabel.setText("Start");
 			this.backwardButton.setDisable(true);
 		}
 		this.forwardButton.setDisable(false);
@@ -410,9 +413,13 @@ public class FastestPathSimulatorController implements Initializable{
 		if(GlobalUtil.ViewDEBUG){
 			System.out.println("onForwardPressed");
 		}
-		this.model.forward();
+		String actionDescription  = this.model.forward();
+		this.msgLabel.setText(actionDescription);
+
 		refleshView();
 		if(!this.model.hasNextStep()){
+			this.msgLabel.setText("Goal");
+
 			this.forwardButton.setDisable(true);
 		}
 		this.backwardButton.setDisable(false);

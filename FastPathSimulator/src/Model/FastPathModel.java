@@ -146,25 +146,33 @@ public class FastPathModel {
 		return this.currentStatus[rowID][colID];
 	}
 	
-	//return whether there exists movement after this
-	public void forward(){
+	//Return the description of the action
+	public String forward(){
+		String description = null;
 		if(actionIndex >= 0 && actionIndex < fastestPath.size()){
-			this.robot.move(fastestPath.get(actionIndex));
+			Action act = fastestPath.get(actionIndex);
+			description = act.toString();
+			this.robot.move(act);
 			actionIndex++;
 			updateStatus();
 			
 			}
+		return description;
 		}
 	
 	
-	//return whether there exists movement before this
-	public  void backward(){
+	//Return the description of the action
+	public  String backward(){
+		String description = null;
 		if(actionIndex >= 1 && actionIndex <= fastestPath.size()){
 			actionIndex--;
-			this.robot.move(Action.revert(fastestPath.get(actionIndex)));
+			Action act = fastestPath.get(actionIndex);
+			description = act.toString();
+
+			this.robot.move(Action.revert(act));
 			updateStatus();
 		}
-		
+		return description;
 	}
 	
 	private void updateStatus(){
