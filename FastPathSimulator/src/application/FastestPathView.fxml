@@ -69,7 +69,7 @@
             <Font size="19.0" />
          </font>
       </Button>
-      <Button fx:id="forwardButton" layoutX="714.0" layoutY="393.0" mnemonicParsing="false" onAction="#onForwardPressed" prefHeight="45.0" prefWidth="50.0" text="&gt;">
+      <Button fx:id="forwardButton" layoutX="714.0" layoutY="390.0" mnemonicParsing="false" onAction="#onForwardPressed" prefHeight="45.0" prefWidth="50.0" text="&gt;">
          <font>
             <Font size="19.0" />
          </font>

@@ -24,33 +24,35 @@ public class Action {
 	
 	public Direction directionAfterAction(Direction dir){
 		if(this.equals(TURN_LEFT)){
-			if(dir.equals(Direction.LEFT)){
-				return Direction.DOWN;
-			}else if(dir.equals(Direction.RIGHT)){
-				return Direction.UP;
-			}else if(dir.equals(Direction.UP)){
-				return Direction.LEFT;
-			}else{
-				//Current Direction is DOWN
-				return Direction.RIGHT;
-			}
+			return dir.relativeToLeft();
+//			if(dir.equals(Direction.LEFT)){
+//				return Direction.DOWN;
+//			}else if(dir.equals(Direction.RIGHT)){
+//				return Direction.UP;
+//			}else if(dir.equals(Direction.UP)){
+//				return Direction.LEFT;
+//			}else{
+//				//Current Direction is DOWN
+//				return Direction.RIGHT;
+//			}
 		}else if(this.equals(TURN_RIGHT)){
-			if(dir.equals(Direction.LEFT)){
-				return Direction.UP;
-			}else if(dir.equals(Direction.RIGHT)){
-				return Direction.DOWN;
-			}else if(dir.equals(Direction.UP)){
-				return Direction.RIGHT;
-			}else{
-				//Current Direction is DOWN
-				return Direction.LEFT;
-			}
+			return dir.relativeToRight();
+//			if(dir.equals(Direction.LEFT)){
+//				return Direction.UP;
+//			}else if(dir.equals(Direction.RIGHT)){
+//				return Direction.DOWN;
+//			}else if(dir.equals(Direction.UP)){
+//				return Direction.RIGHT;
+//			}else{
+//				//Current Direction is DOWN
+//				return Direction.LEFT;
+//			}
 		}else{
 			return dir;
 		}
 	}
 
-	public static Action opposite(Action action) {
+	public static Action revert(Action action) {
 		// TODO Auto-generated method stub
 		
 		if(action.equals(Action.TURN_LEFT)){

@@ -1,26 +1,53 @@
 package Model;
 
+
 public class Direction {
 	
-	public static Direction UP = new Direction("UP");
-	public static Direction DOWN = new Direction("DOWN");
-	public static Direction LEFT = new Direction("LEFT");
-	public static Direction RIGHT = new Direction("RIGHT");
+	public static Direction UP = new Direction(0);
+	public static Direction RIGHT = new Direction(1);
+
+	public static Direction DOWN = new Direction(2);
+	public static Direction LEFT = new Direction(3);
+	public static int DirectionCount = 4;
 	
-	private String direction;
+	private int dirSymbol;
 	
-	private Direction(String dir){
-		this.direction = dir;
+	private Direction(int dir){
+		this.dirSymbol = dir;
 	}
 	
 	
 	
 	@Override
 	public String toString(){
-		return this.direction;
+		switch(this.dirSymbol){
+			case 0:
+				return "UP";
+			case 1:
+				return "RIGHT";
+			case 2:
+				return "DOWN";
+			case 3:
+				return "RIGHT";
+			default:
+				return "NULL";
+		}
 	}
 	
 	public boolean equals(Direction dir){
-		return this.direction.equals(dir.direction);
+		return this.dirSymbol == dir.dirSymbol;
+	}
+	
+	public  Direction relativeToLeft(){
+
+		return new Direction((this.dirSymbol + DirectionCount - 1) % DirectionCount);
+	}
+	
+	public Direction relativeToRight(){
+		return new Direction((this.dirSymbol + 1) % DirectionCount);
+	}
+	
+	public Direction toOppsite(){
+		return new Direction((this.dirSymbol - DirectionCount / 2) % DirectionCount);		
 	}
 }

@@ -157,7 +157,7 @@ public class FastPathModel {
 	public  void backward(){
 		if(actionIndex >= 1 && actionIndex <= fastestPath.size()){
 			actionIndex--;
-			this.robot.move(Action.opposite(fastestPath.get(actionIndex)));
+			this.robot.move(Action.revert(fastestPath.get(actionIndex)));
 			updateStatus();
 		}
 		
