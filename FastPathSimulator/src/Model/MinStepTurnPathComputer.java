@@ -73,57 +73,57 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 				}// END of loop on columns
 			}//End of loop on rows
 			
+
+			if(!foundMin) break;
 			
-						if(!foundMin) break;
-						
-						assert(!explored[minRowID][minColID][minDrcID]);
-						explored[minRowID][minColID][minDrcID] = true;
-						
-						//Update its three adjacent node
-						
-						//Update the first adjacent node
-						int leftDirectionID = (minDrcID + DIR_MAX) / (DIR_MAX + 1);
-						if(!explored[minRowID][minColID][leftDirectionID] &&
-								distance[minRowID][minColID][leftDirectionID]
-										> distance[minRowID][minColID][minDrcID] + turnWeight){
-							
-							distance[minRowID][minColID][leftDirectionID] 
-									= distance[minRowID][minColID][minDrcID] + turnWeight;
-							preAction[minRowID][minColID][leftDirectionID] = Action.TURN_LEFT;				
-						}
-						
-						//Update the second adjacent node
-						int rightDirectionID = (minDrcID + 1) / (DIR_MAX + 1);
-						if(!explored[minRowID][minColID][rightDirectionID] &&
-								distance[minRowID][minColID][rightDirectionID]
-										> distance[minRowID][minColID][minDrcID] + turnWeight){
-							
-							distance[minRowID][minColID][rightDirectionID] 
-									= distance[minRowID][minColID][minDrcID] + turnWeight;
-							preAction[minRowID][minColID][rightDirectionID] = Action.TURN_RIGHT;				
-						}
-						
-						//Update the third adjacent node
-						int adjacentRowID = minRowID;
-						int adjacentColID = minColID;
-						
-						if(minDrcID == UP_INDEX){
-							adjacentRowID--;
-						}else if(minDrcID == DOWN_INDEX){
-							adjacentRowID++;
-						}else if(minDrcID == RIGHT_INDEX){
-							adjacentColID++;
-						}else{
-							//Left Direction
-							adjacentColID--;
-						}
-						if(!explored[adjacentRowID][adjacentColID][minDrcID] &&
-								distance[adjacentRowID][adjacentColID][minDrcID] >
-									distance[minRowID][minColID][minDrcID] + stepWeight){
-							distance[adjacentRowID][adjacentColID][minDrcID] =
-							distance[minRowID][minColID][minDrcID] + stepWeight;
-							preAction[adjacentRowID][adjacentColID][minDrcID] = Action.MOVE_FORWARD;
-						}
+			assert(!explored[minRowID][minColID][minDrcID]);
+			explored[minRowID][minColID][minDrcID] = true;
+			
+			//Update its three adjacent node
+			
+			//Update the first adjacent node
+			int leftDirectionID = (minDrcID + DIR_MAX) / (DIR_MAX + 1);
+			if(!explored[minRowID][minColID][leftDirectionID] &&
+					distance[minRowID][minColID][leftDirectionID]
+							> distance[minRowID][minColID][minDrcID] + turnWeight){
+				
+				distance[minRowID][minColID][leftDirectionID] 
+						= distance[minRowID][minColID][minDrcID] + turnWeight;
+				preAction[minRowID][minColID][leftDirectionID] = Action.TURN_LEFT;				
+			}
+			
+			//Update the second adjacent node
+			int rightDirectionID = (minDrcID + 1) / (DIR_MAX + 1);
+			if(!explored[minRowID][minColID][rightDirectionID] &&
+					distance[minRowID][minColID][rightDirectionID]
+							> distance[minRowID][minColID][minDrcID] + turnWeight){
+				
+				distance[minRowID][minColID][rightDirectionID] 
+						= distance[minRowID][minColID][minDrcID] + turnWeight;
+				preAction[minRowID][minColID][rightDirectionID] = Action.TURN_RIGHT;				
+			}
+			
+			//Update the third adjacent node
+			int adjacentRowID = minRowID;
+			int adjacentColID = minColID;
+			
+			if(minDrcID == UP_INDEX){
+				adjacentRowID--;
+			}else if(minDrcID == DOWN_INDEX){
+				adjacentRowID++;
+			}else if(minDrcID == RIGHT_INDEX){
+				adjacentColID++;
+			}else{
+				//Left Direction
+				adjacentColID--;
+			}
+			if(!explored[adjacentRowID][adjacentColID][minDrcID] &&
+					distance[adjacentRowID][adjacentColID][minDrcID] >
+						distance[minRowID][minColID][minDrcID] + stepWeight){
+				distance[adjacentRowID][adjacentColID][minDrcID] =
+				distance[minRowID][minColID][minDrcID] + stepWeight;
+				preAction[adjacentRowID][adjacentColID][minDrcID] = Action.MOVE_FORWARD;
+			}
 
 		}// END of infinite WHILE
 		

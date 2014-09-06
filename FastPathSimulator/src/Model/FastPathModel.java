@@ -50,6 +50,7 @@ public class FastPathModel {
 	private int lowerLeftStartColID;
 	private Direction startDirection;
 		
+	private FastestPathComputer pathComputer;
 	
 	
 	public FastPathModel(CustomizedArena arenaMap, 
@@ -59,7 +60,8 @@ public class FastPathModel {
 			
 						int lowerLeftGoalRowID,
 						int lowerLeftGoalColID, 
-						int robotDiameterInCellCount) throws SimulatorException {
+						int robotDiameterInCellCount,
+						FastestPathComputer pathComputer) throws SimulatorException {
 		super();
 		
 		
@@ -80,7 +82,9 @@ public class FastPathModel {
 		
 		this.robot = new Robot(lowerLeftStartRowID, lowerLeftStartColID, robotDiameterInCellCount,startDirection);
 		this.currentStatus = new Cell[arenaMap.getRowCount()][arenaMap.getColumnCount()];
-		if(!computeFastestPath()){
+		
+		this.fastestPath = pathComputer.computeForFastestPath(arenaMap, robot, lowerLeftGoalRowID, lowerLeftGoalColID);
+		if(this.fastestPath == null){
 			throw new SimulatorException(2, "No Path can be found");
 		}
 		updateStatus();

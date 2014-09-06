@@ -15,6 +15,7 @@ import Model.Direction;
 import Model.FastPathModel;
 import Model.FastPathModel.Cell;
 import Model.FastPathModel.SimulatorException;
+import Model.MinStepTurnPathComputer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -195,8 +196,8 @@ public class FastestPathSimulatorController implements Initializable{
 										Direction.UP,
 										GlobalUtil.lowerLeftGoalRowIndex,
 										GlobalUtil.lowerLeftGoalColIndex,
-										GlobalUtil.robotDiameterInCellNumber
-					
+										GlobalUtil.robotDiameterInCellNumber,
+										new MinStepTurnPathComputer(1, 1)
 										);
 			this.model = newModel;
 
