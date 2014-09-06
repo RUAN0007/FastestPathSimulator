@@ -1,16 +1,18 @@
 package Model;
 
+import java.util.ArrayList;
+
 import Model.ArenaTemplate.CellState;
 import Model.FastPathModel.Cell;
 
 public abstract class FastestPathComputer {
 	
 	
-	protected abstract Action[] compute(Integer[][]map,int rowCount,int colCount,
+	protected abstract ArrayList<Action> compute(Integer[][]map,int rowCount,int colCount,
 							int startRowID,int startColID,Direction startDirection,
 							int goalRowID,int goalColID);
 	
-	public Action[] computeForFastestPath(CustomizedArena arena,Robot robot,
+	public ArrayList<Action> computeForFastestPath(CustomizedArena arena,Robot robot,
 										int goalRowID,int goalColID){
 		//Assume the robot is at the start area
 		int rowCount = arena.getRowCount();
