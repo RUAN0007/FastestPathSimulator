@@ -49,9 +49,7 @@ public class FastPathModel {
 	private int southWestStartRowID;
 	private int southWestStartColID;
 	private Orientation startOrientation;
-		
-	private FastestPathComputer pathComputer;
-	
+			
 	
 	public FastPathModel(CustomizedArena arenaMap, 
 						int southWestStartRowID,
