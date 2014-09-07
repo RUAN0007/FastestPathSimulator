@@ -2,6 +2,8 @@ package Model;
 
 import java.util.ArrayList;
 
+import org.omg.CORBA.Current;
+
 public class CloseWallPathComputer extends FastestPathComputer {
 	
 	private Direction robotSideOnObstacle;
@@ -19,17 +21,91 @@ public class CloseWallPathComputer extends FastestPathComputer {
 			int colCount, int startRowID, int startColID,
 			Direction startDirection, int goalRowID, int goalColID) {
 		
-		ArrayList<Action> actions = new ArrayList<Action>();
 		
 		this.map = map;
 		this.rowCount = rowCount;
 		this.colCount = colCount;
 		
 		Block startBlock = new Block(startRowID, startColID);
+		Block goalBlock = new Block(goalRowID,goalColID);
+
 		Block currentBlock = new Block(startRowID, startColID);
 		Direction currentDirection = startDirection;
+		
+		if(this.robotSideOnObstacle.equals(Direction.LEFT)){
+			return moveAlongLeftWall(startBlock, goalBlock,
+					startDirection);
+		}else{
+			return moveAlongRightWall(startBlock, goalBlock,
+					startDirection);
+		}
+	
+		
+		
+	}
 
-		Block goalBlock = new Block(goalRowID,goalColID);
+	private ArrayList<Action> moveAlongRightWall(Block startBlock,
+			Block goalBlock, Direction startDirection) {
+		ArrayList<Action> actions = new ArrayList<Action>();
+		Block currentBlock = new Block(startBlock.getRowID(), startBlock.getColID());
+		Direction currentDirection = startDirection.clone();
+		
+		while(!currentBlock.equals(goalBlock)){
+			boolean moved = false;
+
+			Block rightBlock = currentBlock.toRightOf(currentDirection);
+			Integer rightCell = cellAtBlock(rightBlock);
+			if(rightCell != null && rightCell.equals(new Integer(0))){
+				actions.add(Action.TURN_RIGHT);
+				actions.add(Action.MOVE_FORWARD);
+				currentBlock = rightBlock;
+				currentDirection = currentDirection.relativeToRight();
+				moved = true;
+			}
+			
+			
+			if(!moved){
+				Block aheadBlock = currentBlock.aheadOf(currentDirection);
+				Integer aheadCell = cellAtBlock(aheadBlock);
+				if(aheadCell != null && aheadCell.equals(new Integer(0))){
+					actions.add(Action.MOVE_FORWARD);
+					currentBlock = aheadBlock;
+					moved = true;
+				}
+			}
+			
+			if(!moved){
+
+				Block leftBlock = currentBlock.toLeftOf(currentDirection);
+				Integer leftCell = cellAtBlock(leftBlock);
+				if(leftCell != null && leftCell.equals(new Integer(0))){
+					actions.add(Action.TURN_LEFT);
+					actions.add(Action.MOVE_FORWARD);
+					currentBlock = leftBlock;
+					currentDirection = currentDirection.relativeToLeft();
+					moved = true;
+				}
+			}
+			
+			if(!moved){
+				actions.add(Action.TURN_LEFT);
+				actions.add(Action.TURN_LEFT);
+				currentDirection = currentDirection.relativeToRight();
+				currentDirection = currentDirection.relativeToRight();
+			}
+			
+			
+			if(currentBlock.equals(startBlock)) return null;
+		}
+		return actions;
+	}
+
+	private ArrayList<Action> moveAlongLeftWall(Block startBlock, Block goalBlock,
+			Direction startDirection) {
+		ArrayList<Action> actions = new ArrayList<Action>();
+		Block currentBlock = new Block(startBlock.getRowID(), startBlock.getColID());
+		Direction currentDirection = startDirection.clone();
+		
 		while(!currentBlock.equals(goalBlock)){
 			boolean moved = false;
 
@@ -75,8 +151,6 @@ public class CloseWallPathComputer extends FastestPathComputer {
 			
 			if(currentBlock.equals(startBlock)) return null;
 		}
-		
-		
 		return actions;
 	}
 	
