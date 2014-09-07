@@ -30,7 +30,7 @@ public class PathComputerTest {
 
 		//MinStepTurnPathComputer pathComputer = new MinStepTurnPathComputer(1, 1);
 		//CloseWallPathComputer pathComputer = new CloseWallPathComputer(Direction.RIGHT);
-		DFSPathComputer pathComputer = new DFSPathComputer();
+		DFSPathComputer pathComputer = new DFSPathComputer(Direction.LEFT);
 		ArrayList<Action> actions = pathComputer.compute(map, rowCount, colCount,
 														rowCount - 1, 0, Direction.UP, 
 														0, colCount - 1);

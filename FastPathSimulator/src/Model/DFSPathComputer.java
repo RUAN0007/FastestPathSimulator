@@ -9,6 +9,13 @@ public class DFSPathComputer extends FastestPathComputer {
 	private boolean explored[][];
 	private int rowCount;
 	private int colCount;
+	
+	private Direction preferedDirection;
+	
+	public DFSPathComputer(Direction preDirection){
+		this.preferedDirection = preDirection;
+	}
+	
 	@Override
 	public ArrayList<Action> compute(Integer[][] map, int rowCount,
 			int colCount, int startRowID, int startColID,
@@ -29,6 +36,7 @@ public class DFSPathComputer extends FastestPathComputer {
 		}
 		
 	}
+	
 	private boolean foundPath(Block currentBlock, Direction currentDirection,Block goalBlock) {
 		if(currentBlock.equals(goalBlock)){
 			return true;
@@ -46,10 +54,103 @@ public class DFSPathComputer extends FastestPathComputer {
 		
 		this.setExplored(currentBlock);
 		
+		if(this.preferedDirection.equals(Direction.LEFT)){
+			return exploreFromLeftToRight(currentBlock, currentDirection,
+					goalBlock);
+		}else if(this.preferedDirection.equals(Direction.RIGHT)){
+			return exploreFromRightToLeft(currentBlock, currentDirection,
+					goalBlock);	
+		}else if(this.preferedDirection.equals(Direction.UP)){
+			//Explore From From Top, then left and finally right
+			return exploreFromAheadLeftRight(currentBlock, currentDirection,
+					goalBlock);	
+		}else{
+			assert(false):"Should not reach here";
+		}
 		
+		
+		return false;
+		
+		
+	}
+
+	private boolean exploreFromLeftToRight(Block currentBlock,
+			Direction currentDirection, Block goalBlock) {
+		
+		
+		
+		if(exploreLeft(currentBlock, currentDirection, goalBlock)) return true;
+		
+		if( exploreAhead(currentBlock, currentDirection, goalBlock)) return true;
+		if(exploreRight(currentBlock, currentDirection, goalBlock)) return true;
+
+		return false;
+	}
+	
+	private boolean exploreFromAheadLeftRight(Block currentBlock,
+			Direction currentDirection, Block goalBlock) {
+		
+		
+		if(exploreAhead(currentBlock, currentDirection, goalBlock)) return true;
+
+		if(exploreLeft(currentBlock, currentDirection, goalBlock)) return true;
+		
+		if(exploreRight(currentBlock, currentDirection, goalBlock)) return true;
+
+		return false;
+	}
+	
+	private boolean exploreFromRightToLeft(Block currentBlock,
+			Direction currentDirection, Block goalBlock) {
+		
+		
+		
+		
+		if(exploreRight(currentBlock, currentDirection, goalBlock)) return true;
+		
+		if( exploreAhead(currentBlock, currentDirection, goalBlock)) return true;
+		if(exploreLeft(currentBlock, currentDirection, goalBlock)) return true;
+
+		return false;
+	}
+	
+	
+	
+
+	private boolean exploreAhead(Block currentBlock,
+			Direction currentDirection, Block goalBlock) {
+		Block nextBlock = currentBlock.toRightOf(currentDirection);
+		Direction nextDirection = currentDirection.relativeToRight();
+		this.actions.add(Action.TURN_RIGHT);
+		this.actions.add(Action.MOVE_FORWARD);
+		
+		if(!foundPath(nextBlock, nextDirection,goalBlock)){
+			this.actions.remove(this.actions.size() - 1);
+			this.actions.remove(this.actions.size() - 1);
+			return false;
+		}else{
+			return true;
+		}
+	}
+
+	private boolean exploreRight(Block currentBlock,
+			Direction currentDirection, Block goalBlock) {
+		Block nextBlock = currentBlock.aheadOf(currentDirection);
+		Direction nextDirection = currentDirection.clone();
+		this.actions.add(Action.MOVE_FORWARD);
+
+		if(!foundPath(nextBlock, nextDirection,goalBlock)){
+			this.actions.remove(this.actions.size() - 1);
+			return false;
+		}else{
+			return true;
+		}
+	}
+
+	private boolean exploreLeft(Block currentBlock,
+			Direction currentDirection, Block goalBlock) {
 		Block nextBlock = null;
 		Direction nextDirection = null;
-		
 		
 		nextBlock = currentBlock.toLeftOf(currentDirection);
 		nextDirection = currentDirection.relativeToLeft();
@@ -59,37 +160,10 @@ public class DFSPathComputer extends FastestPathComputer {
 		if(!foundPath(nextBlock, nextDirection,goalBlock)){
 			this.actions.remove(this.actions.size() - 1);
 			this.actions.remove(this.actions.size() - 1);
+			return false;
 		}else{
 			return true;
 		}
-		
-		nextBlock = currentBlock.aheadOf(currentDirection);
-		nextDirection = currentDirection.clone();
-		this.actions.add(Action.MOVE_FORWARD);
-
-		if(!foundPath(nextBlock, nextDirection,goalBlock)){
-			this.actions.remove(this.actions.size() - 1);
-		}else{
-			return true;
-		}
-		
-		
-		nextBlock = currentBlock.toRightOf(currentDirection);
-		nextDirection = currentDirection.relativeToRight();
-		this.actions.add(Action.TURN_RIGHT);
-		this.actions.add(Action.MOVE_FORWARD);
-		
-		if(!foundPath(nextBlock, nextDirection,goalBlock)){
-			this.actions.remove(this.actions.size() - 1);
-			this.actions.remove(this.actions.size() - 1);
-		}else{
-			return true;
-		}
-
-		
-		return false;
-		
-		
 	}
 	private void initDataStructure(int rowCount, int colCount) {
 		this.explored = new boolean[rowCount][colCount];
