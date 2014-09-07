@@ -29,10 +29,10 @@ public class PathComputerTest {
 		map[3][3] = new Integer(1);
 
 		//MinStepTurnPathComputer pathComputer = new MinStepTurnPathComputer(1, 1);
-		//CloseWallPathComputer pathComputer = new CloseWallPathComputer(Direction.RIGHT);
-		DFSPathComputer pathComputer = new DFSPathComputer(Direction.LEFT);
+		//CloseWallPathComputer pathComputer = new CloseWallPathComputer(Orientation.RIGHT);
+		DFSPathComputer pathComputer = new DFSPathComputer(Orientation.WEST);
 		ArrayList<Action> actions = pathComputer.compute(map, rowCount, colCount,
-														rowCount - 1, 0, Direction.UP, 
+														rowCount - 1, 0, Orientation.NORTH, 
 														0, colCount - 1);
 		if(actions == null){
 			System.out.println("NO WAY!");

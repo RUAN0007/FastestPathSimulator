@@ -16,15 +16,15 @@ public class Block {
 		this.colID = colID;
 	}
 	
-	public Block toLeftOf(Direction face){
+	public Block toLeftOf(Orientation face){
 		int leftRowID = this.rowID;
 		int leftColID = this.colID;
 		
-		if(face.equals(Direction.UP)){
+		if(face.equals(Orientation.NORTH)){
 			leftColID--;
-		}else if(face.equals(Direction.RIGHT)){
+		}else if(face.equals(Orientation.EAST)){
 			leftRowID--;
-		}else if(face.equals(Direction.DOWN)){
+		}else if(face.equals(Orientation.SOUTH)){
 			leftColID++;
 		}else{
 			//face to left
@@ -33,15 +33,15 @@ public class Block {
 		return new Block(leftRowID, leftColID);
 	}
 	
-	public Block toRightOf(Direction face){
+	public Block toRightOf(Orientation face){
 		int rightRowID = this.rowID;
 		int rightColID = this.colID;
 		
-		if(face.equals(Direction.UP)){
+		if(face.equals(Orientation.NORTH)){
 			rightColID++;
-		}else if(face.equals(Direction.RIGHT)){
+		}else if(face.equals(Orientation.EAST)){
 			rightRowID++;
-		}else if(face.equals(Direction.DOWN)){
+		}else if(face.equals(Orientation.SOUTH)){
 			rightColID--;
 		}else{
 			//face to left
@@ -50,17 +50,17 @@ public class Block {
 		return new Block(rightRowID, rightColID);
 	}
 	
-	public Block aheadOf(Direction face){
+	public Block aheadOf(Orientation face){
 		int aheadRowID = this.rowID;
 		int aheadColID = this.colID;
 		
-		if(face.equals(Direction.UP)){
+		if(face.equals(Orientation.NORTH)){
 			aheadRowID--;
 
-		}else if(face.equals(Direction.RIGHT)){
+		}else if(face.equals(Orientation.EAST)){
 			aheadColID++;
 
-		}else if(face.equals(Direction.DOWN)){
+		}else if(face.equals(Orientation.SOUTH)){
 			aheadRowID++;
 
 		}else{
@@ -70,17 +70,17 @@ public class Block {
 		return new Block(aheadRowID, aheadColID);
 	}
 	
-	public Block rearOf(Direction face){
+	public Block rearOf(Orientation face){
 		int rearRowID = this.rowID;
 		int rearColID = this.colID;
 		
-		if(face.equals(Direction.UP)){
+		if(face.equals(Orientation.NORTH)){
 			rearRowID++;
 
-		}else if(face.equals(Direction.RIGHT)){
+		}else if(face.equals(Orientation.EAST)){
 			rearColID--;
 
-		}else if(face.equals(Direction.DOWN)){
+		}else if(face.equals(Orientation.SOUTH)){
 			rearRowID--;
 
 		}else{

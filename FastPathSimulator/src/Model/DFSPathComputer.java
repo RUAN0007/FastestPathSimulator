@@ -10,16 +10,16 @@ public class DFSPathComputer extends FastestPathComputer {
 	private int rowCount;
 	private int colCount;
 	
-	private Direction preferedDirection;
+	private Orientation preferedOrientation;
 	
-	public DFSPathComputer(Direction preDirection){
-		this.preferedDirection = preDirection;
+	public DFSPathComputer(Orientation preOrientation){
+		this.preferedOrientation = preOrientation;
 	}
 	
 	@Override
 	public ArrayList<Action> compute(Integer[][] map, int rowCount,
 			int colCount, int startRowID, int startColID,
-			Direction startDirection, int goalRowID, int goalColID) {
+			Orientation startOrientation, int goalRowID, int goalColID) {
 		this.map = map;
 		this.actions = new ArrayList<Action>();
 		this.rowCount = rowCount;
@@ -29,7 +29,7 @@ public class DFSPathComputer extends FastestPathComputer {
 		Block startBlock = new Block(startRowID, startColID);
 		Block goalBlock = new Block(goalRowID,goalColID);
 		
-		if(foundPath(startBlock,startDirection,goalBlock)){
+		if(foundPath(startBlock,startOrientation,goalBlock)){
 			return this.actions;
 		}else{
 			return null;
@@ -37,7 +37,7 @@ public class DFSPathComputer extends FastestPathComputer {
 		
 	}
 	
-	private boolean foundPath(Block currentBlock, Direction currentDirection,Block goalBlock) {
+	private boolean foundPath(Block currentBlock, Orientation currentOrientation,Block goalBlock) {
 		if(currentBlock.equals(goalBlock)){
 			return true;
 		}
@@ -54,15 +54,15 @@ public class DFSPathComputer extends FastestPathComputer {
 		
 		this.setExplored(currentBlock);
 		
-		if(this.preferedDirection.equals(Direction.LEFT)){
-			return exploreFromLeftToRight(currentBlock, currentDirection,
+		if(this.preferedOrientation.equals(Orientation.WEST)){
+			return exploreFromLeftToRight(currentBlock, currentOrientation,
 					goalBlock);
-		}else if(this.preferedDirection.equals(Direction.RIGHT)){
-			return exploreFromRightToLeft(currentBlock, currentDirection,
+		}else if(this.preferedOrientation.equals(Orientation.EAST)){
+			return exploreFromRightToLeft(currentBlock, currentOrientation,
 					goalBlock);	
-		}else if(this.preferedDirection.equals(Direction.UP)){
+		}else if(this.preferedOrientation.equals(Orientation.NORTH)){
 			//Explore From From Top, then left and finally right
-			return exploreFromAheadLeftRight(currentBlock, currentDirection,
+			return exploreFromAheadLeftRight(currentBlock, currentOrientation,
 					goalBlock);	
 		}else{
 			assert(false):"Should not reach here";
@@ -75,41 +75,41 @@ public class DFSPathComputer extends FastestPathComputer {
 	}
 
 	private boolean exploreFromLeftToRight(Block currentBlock,
-			Direction currentDirection, Block goalBlock) {
+			Orientation currentOrientation, Block goalBlock) {
 		
 		
 		
-		if(exploreLeft(currentBlock, currentDirection, goalBlock)) return true;
+		if(exploreLeft(currentBlock, currentOrientation, goalBlock)) return true;
 		
-		if( exploreAhead(currentBlock, currentDirection, goalBlock)) return true;
-		if(exploreRight(currentBlock, currentDirection, goalBlock)) return true;
+		if( exploreAhead(currentBlock, currentOrientation, goalBlock)) return true;
+		if(exploreRight(currentBlock, currentOrientation, goalBlock)) return true;
 
 		return false;
 	}
 	
 	private boolean exploreFromAheadLeftRight(Block currentBlock,
-			Direction currentDirection, Block goalBlock) {
+			Orientation currentOrientation, Block goalBlock) {
 		
 		
-		if(exploreAhead(currentBlock, currentDirection, goalBlock)) return true;
+		if(exploreAhead(currentBlock, currentOrientation, goalBlock)) return true;
 
-		if(exploreLeft(currentBlock, currentDirection, goalBlock)) return true;
+		if(exploreLeft(currentBlock, currentOrientation, goalBlock)) return true;
 		
-		if(exploreRight(currentBlock, currentDirection, goalBlock)) return true;
+		if(exploreRight(currentBlock, currentOrientation, goalBlock)) return true;
 
 		return false;
 	}
 	
 	private boolean exploreFromRightToLeft(Block currentBlock,
-			Direction currentDirection, Block goalBlock) {
+			Orientation currentOrientation, Block goalBlock) {
 		
 		
 		
 		
-		if(exploreRight(currentBlock, currentDirection, goalBlock)) return true;
+		if(exploreRight(currentBlock, currentOrientation, goalBlock)) return true;
 		
-		if( exploreAhead(currentBlock, currentDirection, goalBlock)) return true;
-		if(exploreLeft(currentBlock, currentDirection, goalBlock)) return true;
+		if( exploreAhead(currentBlock, currentOrientation, goalBlock)) return true;
+		if(exploreLeft(currentBlock, currentOrientation, goalBlock)) return true;
 
 		return false;
 	}
@@ -118,13 +118,13 @@ public class DFSPathComputer extends FastestPathComputer {
 	
 
 	private boolean exploreAhead(Block currentBlock,
-			Direction currentDirection, Block goalBlock) {
-		Block nextBlock = currentBlock.toRightOf(currentDirection);
-		Direction nextDirection = currentDirection.relativeToRight();
+			Orientation currentOrientation, Block goalBlock) {
+		Block nextBlock = currentBlock.toRightOf(currentOrientation);
+		Orientation nextOrientation = currentOrientation.relativeToRight();
 		this.actions.add(Action.TURN_RIGHT);
 		this.actions.add(Action.MOVE_FORWARD);
 		
-		if(!foundPath(nextBlock, nextDirection,goalBlock)){
+		if(!foundPath(nextBlock, nextOrientation,goalBlock)){
 			this.actions.remove(this.actions.size() - 1);
 			this.actions.remove(this.actions.size() - 1);
 			return false;
@@ -134,12 +134,12 @@ public class DFSPathComputer extends FastestPathComputer {
 	}
 
 	private boolean exploreRight(Block currentBlock,
-			Direction currentDirection, Block goalBlock) {
-		Block nextBlock = currentBlock.aheadOf(currentDirection);
-		Direction nextDirection = currentDirection.clone();
+			Orientation currentOrientation, Block goalBlock) {
+		Block nextBlock = currentBlock.aheadOf(currentOrientation);
+		Orientation nextOrientation = currentOrientation.clone();
 		this.actions.add(Action.MOVE_FORWARD);
 
-		if(!foundPath(nextBlock, nextDirection,goalBlock)){
+		if(!foundPath(nextBlock, nextOrientation,goalBlock)){
 			this.actions.remove(this.actions.size() - 1);
 			return false;
 		}else{
@@ -148,16 +148,16 @@ public class DFSPathComputer extends FastestPathComputer {
 	}
 
 	private boolean exploreLeft(Block currentBlock,
-			Direction currentDirection, Block goalBlock) {
+			Orientation currentOrientation, Block goalBlock) {
 		Block nextBlock = null;
-		Direction nextDirection = null;
+		Orientation nextOrientation = null;
 		
-		nextBlock = currentBlock.toLeftOf(currentDirection);
-		nextDirection = currentDirection.relativeToLeft();
+		nextBlock = currentBlock.toLeftOf(currentOrientation);
+		nextOrientation = currentOrientation.relativeToLeft();
 		this.actions.add(Action.TURN_LEFT);
 		this.actions.add(Action.MOVE_FORWARD);
 		
-		if(!foundPath(nextBlock, nextDirection,goalBlock)){
+		if(!foundPath(nextBlock, nextOrientation,goalBlock)){
 			this.actions.remove(this.actions.size() - 1);
 			this.actions.remove(this.actions.size() - 1);
 			return false;

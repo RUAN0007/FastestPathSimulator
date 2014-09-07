@@ -38,12 +38,12 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 
 	@Override
 	public ArrayList<Action> compute(Integer[][] map, int rowCount, int colCount,
-			int startRowID, int startColID, Direction startDirection,
+			int startRowID, int startColID, Orientation startOrientation,
 			int goalRowID, int goalColID) {
 		
 		 initDataStructure(map, rowCount, colCount);
 		
-		int startDrcID = IndexOfDirection(startDirection);
+		int startDrcID = IndexOfOrientation(startOrientation);
 		distance[startRowID][startColID][startDrcID] = 0;
 		int goalDrcID = DIR_NULL;
 		while(true){
@@ -65,14 +65,14 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 			
 			//Update its three adjacent node
 			
-			int leftDirectionID = (minDrcID + DIR_MAX) % (DIR_MAX + 1);
-			if(updateNodeDist(minRowID,minColID,leftDirectionID,turnWeight)){
-				preAction[minRowID][minColID][leftDirectionID] = Action.TURN_LEFT;				
+			int leftOrientationID = (minDrcID + DIR_MAX) % (DIR_MAX + 1);
+			if(updateNodeDist(minRowID,minColID,leftOrientationID,turnWeight)){
+				preAction[minRowID][minColID][leftOrientationID] = Action.TURN_LEFT;				
 			};
 			
-			int rightDirectionID = (minDrcID + 1) % (DIR_MAX + 1);
-			if(updateNodeDist(minRowID,minColID,rightDirectionID,turnWeight)){
-				preAction[minRowID][minColID][rightDirectionID] = Action.TURN_RIGHT;				
+			int rightOrientationID = (minDrcID + 1) % (DIR_MAX + 1);
+			if(updateNodeDist(minRowID,minColID,rightOrientationID,turnWeight)){
+				preAction[minRowID][minColID][rightOrientationID] = Action.TURN_RIGHT;				
 			};
 			
 			
@@ -86,7 +86,7 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 			}else if(minDrcID == LEFT_INDEX){
 				adjacentColID--;
 			}else{
-				//RIGHT Direction
+				//RIGHT Orientation
 				adjacentColID++;
 			}
 			if(0 <= adjacentRowID && adjacentRowID < rowCount &&
@@ -103,7 +103,7 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 		for(int drcID = DIR_MIN;drcID <= DIR_MAX;drcID ++){
 			assert(explored[goalRowID][goalColID][drcID]);
 			assert(preAction[goalRowID][goalColID][drcID] != null);
-		}//END of loop on direction		
+		}//END of loop on orientation		
 	
 		
 		
@@ -121,7 +121,7 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 
 
 
-	//Each cell has 4 direction nodes. 
+	//Each cell has 4 orientation nodes. 
 	//Return whether the update the applicable
 	private boolean updateNodeDist(int rowID,int colID, int drcID, int weight) {
 		if(!explored[rowID][colID][drcID] &&
@@ -139,7 +139,7 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 
 
 	private int minDistGoalDrcID(int goalRowID, int goalColID) {
-		//All the directions at goal state has been explored
+		//All the orientations at goal state has been explored
 		int goalDrcID = DIR_NULL;
 		int minDistForDrcOnGoal = Integer.MAX_VALUE;
 		for(int drcID = DIR_MIN;drcID <= DIR_MAX;drcID ++){
@@ -153,7 +153,7 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 				}
 			}
 			
-		}//END of loop on direction
+		}//END of loop on orientation
 		return goalDrcID;
 	}
 
@@ -173,7 +173,7 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 						minDist = distance[rowID][colID][drcID];
 						foundMin = true;
 					}
-				}//END of loop on direction
+				}//END of loop on orientation
 			}// END of loop on columns
 		}//End of loop on rows
 		return foundMin;
@@ -183,9 +183,9 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 
 
 	private void initDataStructure(Integer[][] map, int rowCount, int colCount) {
-		distance = new int[rowCount][colCount][Direction.DirectionCount];
-		 preAction = new Action[rowCount][colCount][Direction.DirectionCount];
-		 explored = new boolean[rowCount][colCount][Direction.DirectionCount];
+		distance = new int[rowCount][colCount][Orientation.OrientationCount];
+		 preAction = new Action[rowCount][colCount][Orientation.OrientationCount];
+		 explored = new boolean[rowCount][colCount][Orientation.OrientationCount];
 		
 		for(int rowID = 0;rowID < rowCount ; rowID++){
 			for(int colID = 0;colID < colCount;colID++){
@@ -198,7 +198,7 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 					preAction[rowID][colID][drcID] = null;
 					explored[rowID][colID][drcID] = isObstacle;
 					
-				}//END of loop on direction
+				}//END of loop on orientation
 			}// END of loop on columns
 		}//End of loop on rows
 	}
@@ -236,7 +236,7 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 				}else if(drcID == LEFT_INDEX){
 					colID++;
 				}else{
-					//RIGHT Direction
+					//RIGHT Orientation
 					colID--;
 				}
 				
@@ -249,12 +249,12 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 
 
 
-	private static int IndexOfDirection(Direction direction){
-		if(direction.equals(Direction.UP)){
+	private static int IndexOfOrientation(Orientation orientation){
+		if(orientation.equals(Orientation.NORTH)){
 			return UP_INDEX;
-		}else if(direction.equals(Direction.RIGHT)){
+		}else if(orientation.equals(Orientation.EAST)){
 			return RIGHT_INDEX;
-		}else if(direction.equals(Direction.DOWN)){
+		}else if(orientation.equals(Orientation.SOUTH)){
 			return DOWN_INDEX;
 		}else{
 			//LEFT DIRECTION

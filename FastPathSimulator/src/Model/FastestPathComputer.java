@@ -9,7 +9,7 @@ public abstract class FastestPathComputer {
 	
 	
 	public abstract ArrayList<Action> compute(Integer[][]map,int rowCount,int colCount,
-							int startRowID,int startColID,Direction startDirection,
+							int startRowID,int startColID,Orientation startOrientation,
 							int goalRowID,int goalColID);
 	
 	public ArrayList<Action> computeForFastestPath(CustomizedArena arena,Robot robot,
@@ -20,7 +20,7 @@ public abstract class FastestPathComputer {
 		
 		int startRowID = robot.getLowerLeftRowIndex();
 		int startColID = robot.getLowerLeftColIndex();
-		Direction startDirection = robot.getCurrentDirection();
+		Orientation startOrientation = robot.getCurrentOrientation();
 
 		int robotDiameterInCellNum = robot.getDiameterInCellNum();
 		Integer[][] logicalMap = getLogicalMap(arena,robotDiameterInCellNum);
@@ -29,7 +29,7 @@ public abstract class FastestPathComputer {
 						colCount, 
 						startRowID, 
 						startColID, 
-						startDirection, 
+						startOrientation, 
 						goalRowID, 
 						goalColID);
 	}

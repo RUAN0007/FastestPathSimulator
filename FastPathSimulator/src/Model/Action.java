@@ -22,30 +22,30 @@ public class Action {
 		return this.action.equals(act.action);
 	}
 	
-	public Direction directionAfterAction(Direction dir){
+	public Orientation orientationAfterAction(Orientation dir){
 		if(this.equals(TURN_LEFT)){
 			return dir.relativeToLeft();
-//			if(dir.equals(Direction.LEFT)){
-//				return Direction.DOWN;
-//			}else if(dir.equals(Direction.RIGHT)){
-//				return Direction.UP;
-//			}else if(dir.equals(Direction.UP)){
-//				return Direction.LEFT;
+//			if(dir.equals(Orientation.LEFT)){
+//				return Orientation.DOWN;
+//			}else if(dir.equals(Orientation.RIGHT)){
+//				return Orientation.UP;
+//			}else if(dir.equals(Orientation.UP)){
+//				return Orientation.LEFT;
 //			}else{
-//				//Current Direction is DOWN
-//				return Direction.RIGHT;
+//				//Current Orientation is DOWN
+//				return Orientation.RIGHT;
 //			}
 		}else if(this.equals(TURN_RIGHT)){
 			return dir.relativeToRight();
-//			if(dir.equals(Direction.LEFT)){
-//				return Direction.UP;
-//			}else if(dir.equals(Direction.RIGHT)){
-//				return Direction.DOWN;
-//			}else if(dir.equals(Direction.UP)){
-//				return Direction.RIGHT;
+//			if(dir.equals(Orientation.LEFT)){
+//				return Orientation.UP;
+//			}else if(dir.equals(Orientation.RIGHT)){
+//				return Orientation.DOWN;
+//			}else if(dir.equals(Orientation.UP)){
+//				return Orientation.RIGHT;
 //			}else{
-//				//Current Direction is DOWN
-//				return Direction.LEFT;
+//				//Current Orientation is DOWN
+//				return Orientation.LEFT;
 //			}
 		}else{
 			return dir;

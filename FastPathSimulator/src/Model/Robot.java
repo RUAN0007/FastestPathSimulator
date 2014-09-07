@@ -4,17 +4,17 @@ public class Robot {
 	
 	private Block lowerLeftBlock;
 	private int diameterInCellNum;
-	private Direction currentDirection;
+	private Orientation currentOrientation;
 	
 	
 	
 	
 	public Robot(int lowerLeftRowIndex, int lowerLeftColIndex,
-			int diameterInCellNum, Direction currentDirection) {
+			int diameterInCellNum, Orientation currentOrientation) {
 		super();
 		this.lowerLeftBlock = new Block(lowerLeftRowIndex, lowerLeftColIndex);
 		this.diameterInCellNum = diameterInCellNum;
-		this.currentDirection = currentDirection;
+		this.currentOrientation = currentOrientation;
 	}
 	
 	
@@ -34,11 +34,11 @@ public class Robot {
 		this.lowerLeftBlock = new Block(lowerLeftRowID, lowerLeftColIndex);
 	}
 	
-	public Direction getCurrentDirection() {
-		return currentDirection;
+	public Orientation getCurrentOrientation() {
+		return currentOrientation;
 	}
-	public void setCurrentDirection(Direction currentDirection) {
-		this.currentDirection = currentDirection;
+	public void setCurrentOrientation(Orientation currentOrientation) {
+		this.currentOrientation = currentOrientation;
 	}
 	public int getDiameterInCellNum() {
 		return diameterInCellNum;
@@ -48,38 +48,38 @@ public class Robot {
 	public String toString(){
 		return "Robot:\n"
 				+"Lower Left Block: " + this.lowerLeftBlock.toString() + "\n"
-				+"Diameter: " + this.diameterInCellNum + " Direction: " + this.currentDirection;
+				+"Diameter: " + this.diameterInCellNum + " Orientation: " + this.currentOrientation;
 	}
 	
 	public void move(Action act){
 		if(act.equals(Action.MOVE_FORWARD)){
-			this.lowerLeftBlock = this.lowerLeftBlock.aheadOf(currentDirection);
+			this.lowerLeftBlock = this.lowerLeftBlock.aheadOf(currentOrientation);
 		}else if(act.equals(Action.DRAW_BACK)){
-			this.lowerLeftBlock = this.lowerLeftBlock.rearOf(currentDirection);
+			this.lowerLeftBlock = this.lowerLeftBlock.rearOf(currentOrientation);
 
 		}
-		this.currentDirection = act.directionAfterAction(this.currentDirection);
+		this.currentOrientation = act.orientationAfterAction(this.currentOrientation);
 
-		//		if(this.currentDirection.equals(Direction.LEFT)){
+		//		if(this.currentOrientation.equals(Orientation.LEFT)){
 //			if(act.equals(Action.MOVE_FORWARD)){
 //				this.lowerLeftColIndex--;
 //			}else if(act.equals(Action.DRAW_BACK)){
 //				this.lowerLeftColIndex++;
 //			}
-//		}else if(this.currentDirection.equals(Direction.RIGHT)){
+//		}else if(this.currentOrientation.equals(Orientation.RIGHT)){
 //			if(act.equals(Action.MOVE_FORWARD)){
 //				this.lowerLeftColIndex++;
 //			}else if(act.equals(Action.DRAW_BACK)){
 //				this.lowerLeftColIndex--;
 //			}
-//		}else if(this.currentDirection.equals(Direction.UP)){
+//		}else if(this.currentOrientation.equals(Orientation.UP)){
 //			if(act.equals(Action.MOVE_FORWARD)){
 //				this.lowerLeftRowIndex--;
 //			}else if(act.equals(Action.DRAW_BACK)){
 //				this.lowerLeftRowIndex++;
 //			}
 //		}else{
-//			//Current Direction is DOWN
+//			//Current Orientation is DOWN
 //			if(act.equals(Action.MOVE_FORWARD)){
 //				this.lowerLeftRowIndex++;
 //			}else if(act.equals(Action.DRAW_BACK)){

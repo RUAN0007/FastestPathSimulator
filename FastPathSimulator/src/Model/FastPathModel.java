@@ -48,7 +48,7 @@ public class FastPathModel {
 	
 	private int lowerLeftStartRowID;
 	private int lowerLeftStartColID;
-	private Direction startDirection;
+	private Orientation startOrientation;
 		
 	private FastestPathComputer pathComputer;
 	
@@ -56,7 +56,7 @@ public class FastPathModel {
 	public FastPathModel(CustomizedArena arenaMap, 
 						int lowerLeftStartRowID,
 						int lowerLeftStartColID,
-						Direction startDirection,
+						Orientation startOrientation,
 			
 						int lowerLeftGoalRowID,
 						int lowerLeftGoalColID, 
@@ -78,9 +78,9 @@ public class FastPathModel {
 		this.lowerLeftGoalColID = lowerLeftGoalColID;
 		this.lowerLeftStartRowID = lowerLeftStartRowID;
 		this.lowerLeftStartColID = lowerLeftStartColID;
-		this.startDirection = startDirection;
+		this.startOrientation = startOrientation;
 		
-		this.robot = new Robot(lowerLeftStartRowID, lowerLeftStartColID, robotDiameterInCellCount,startDirection);
+		this.robot = new Robot(lowerLeftStartRowID, lowerLeftStartColID, robotDiameterInCellCount,startOrientation);
 		this.currentStatus = new Cell[arenaMap.getRowCount()][arenaMap.getColumnCount()];
 		
 		this.fastestPath = pathComputer.computeForFastestPath(arenaMap, robot, lowerLeftGoalRowID, lowerLeftGoalColID);
@@ -206,7 +206,7 @@ public class FastPathModel {
 	}
 
 	private void updateForPath() {
-		Direction direction = this.startDirection;
+		Orientation orientation = this.startOrientation;
 		int lowerLeftRowID = this.lowerLeftStartRowID;
 		int lowerLeftColID = this.lowerLeftStartColID;
 		int robotDiameterInCellNum = this.robot.getDiameterInCellNum();
@@ -214,8 +214,8 @@ public class FastPathModel {
 		for(int actID = 0;actID < this.actionIndex;actID++){
 			Action act = this.fastestPath.get(actID);
 			
-			if((direction.equals(Direction.UP) && act.equals(Action.MOVE_FORWARD))
-					||(direction.equals(Direction.DOWN) && act.equals(Action.DRAW_BACK))){
+			if((orientation.equals(Orientation.NORTH) && act.equals(Action.MOVE_FORWARD))
+					||(orientation.equals(Orientation.SOUTH) && act.equals(Action.DRAW_BACK))){
 				
 				//MOVE UPWARD
 				int rowID = lowerLeftRowID;
@@ -224,8 +224,8 @@ public class FastPathModel {
 					this.currentStatus[rowID][colID + offset] =  Cell.PATH;
 				}
 				lowerLeftRowID--;
-			}else if((direction.equals(Direction.UP) && act.equals(Action.DRAW_BACK))
-					||(direction.equals(Direction.DOWN) && act.equals(Action.MOVE_FORWARD))){
+			}else if((orientation.equals(Orientation.NORTH) && act.equals(Action.DRAW_BACK))
+					||(orientation.equals(Orientation.SOUTH) && act.equals(Action.MOVE_FORWARD))){
 				
 				//MOVE DOWNWARD
 				//Draw the DIRECTION CELL at the top of robot
@@ -236,8 +236,8 @@ public class FastPathModel {
 					this.currentStatus[rowID][colID + offset] =  Cell.PATH;
 				}
 				lowerLeftRowID++;
-			}else if((direction.equals(Direction.LEFT) && act.equals(Action.MOVE_FORWARD))
-					||(direction.equals(Direction.RIGHT) && act.equals(Action.DRAW_BACK))){
+			}else if((orientation.equals(Orientation.WEST) && act.equals(Action.MOVE_FORWARD))
+					||(orientation.equals(Orientation.EAST) && act.equals(Action.DRAW_BACK))){
 				
 				//MOVE TO LEFT	
 				//Draw the path on right side of the robot
@@ -248,8 +248,8 @@ public class FastPathModel {
 					this.currentStatus[rowID - offset][colID] =  Cell.PATH;
 				}
 				lowerLeftColID--;
-			}else if((direction.equals(Direction.LEFT) && act.equals(Action.DRAW_BACK))
-					||(direction.equals(Direction.RIGHT) && act.equals(Action.MOVE_FORWARD))){
+			}else if((orientation.equals(Orientation.WEST) && act.equals(Action.DRAW_BACK))
+					||(orientation.equals(Orientation.EAST) && act.equals(Action.MOVE_FORWARD))){
 				
 				//MOVE TO RIGHT	
 				//Draw the path on left side of the robot
@@ -262,7 +262,7 @@ public class FastPathModel {
 				lowerLeftColID++;
 			}
 			
-			direction = act.directionAfterAction(direction);
+			orientation = act.orientationAfterAction(orientation);
 		}
 	}
 
@@ -279,9 +279,9 @@ public class FastPathModel {
 			}
 		}
 		
-		//Draw the Direction Cell
+		//Draw the Orientation Cell
 		
-		if(this.robot.getCurrentDirection().equals(Direction.LEFT)){
+		if(this.robot.getCurrentOrientation().equals(Orientation.WEST)){
 		
 			cellRowIndex = this.robot.getLowerLeftRowIndex();
 			cellColIndex = this.robot.getLowerLeftColIndex();
@@ -290,7 +290,7 @@ public class FastPathModel {
 				this.currentStatus[cellRowIndex][cellColIndex] = Cell.ROBOT_DIRECTION;
 				cellRowIndex --;
 			}
-		}else if(this.robot.getCurrentDirection().equals(Direction.RIGHT)){
+		}else if(this.robot.getCurrentOrientation().equals(Orientation.EAST)){
 		
 			cellRowIndex = this.robot.getLowerLeftRowIndex();
 			cellColIndex = this.robot.getLowerLeftColIndex() + robotDiameterInCellNum - 1;
@@ -299,7 +299,7 @@ public class FastPathModel {
 				this.currentStatus[cellRowIndex][cellColIndex] = Cell.ROBOT_DIRECTION;
 				cellRowIndex --;
 			}
-		}else if(this.robot.getCurrentDirection().equals(Direction.UP)){
+		}else if(this.robot.getCurrentOrientation().equals(Orientation.NORTH)){
 			cellRowIndex = this.robot.getLowerLeftRowIndex() - robotDiameterInCellNum + 1;
 			cellColIndex = this.robot.getLowerLeftColIndex();
 
@@ -308,7 +308,7 @@ public class FastPathModel {
 				cellColIndex ++;
 			}
 			
-		}else if(this.robot.getCurrentDirection().equals(Direction.DOWN)){
+		}else if(this.robot.getCurrentOrientation().equals(Orientation.SOUTH)){
 			cellRowIndex = this.robot.getLowerLeftRowIndex();
 			cellColIndex = this.robot.getLowerLeftColIndex();
 
@@ -357,7 +357,7 @@ public class FastPathModel {
 	}
 	
 	public void reset(){
-		this.robot.setCurrentDirection(startDirection);
+		this.robot.setCurrentOrientation(startOrientation);
 		this.robot.setLowerLeftRowIndex(lowerLeftStartRowID);
 		this.robot.setLowerLeftColIndex(lowerLeftStartColID);
 		this.actionIndex = 0;

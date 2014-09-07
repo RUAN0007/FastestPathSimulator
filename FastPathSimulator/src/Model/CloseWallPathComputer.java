@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 public class CloseWallPathComputer extends FastestPathComputer {
 	
-	private Direction robotSideOnObstacle;
+	private Orientation robotSideOnObstacle;
 	private Integer[][] map;
 	private int rowCount;
 	private int colCount;
 	
-	public CloseWallPathComputer(Direction robotSideOnObstacle) {
+	public CloseWallPathComputer(Orientation robotSideOnObstacle) {
 		super();
 		this.robotSideOnObstacle = robotSideOnObstacle;
 	}
@@ -17,7 +17,7 @@ public class CloseWallPathComputer extends FastestPathComputer {
 	@Override
 	public ArrayList<Action> compute(Integer[][] map, int rowCount,
 			int colCount, int startRowID, int startColID,
-			Direction startDirection, int goalRowID, int goalColID) {
+			Orientation startOrientation, int goalRowID, int goalColID) {
 		
 		
 		this.map = map;
@@ -28,12 +28,12 @@ public class CloseWallPathComputer extends FastestPathComputer {
 		Block goalBlock = new Block(goalRowID,goalColID);
 
 		
-		if(this.robotSideOnObstacle.equals(Direction.LEFT)){
+		if(this.robotSideOnObstacle.equals(Orientation.WEST)){
 			return moveAlongLeftWall(startBlock, goalBlock,
-					startDirection);
+					startOrientation);
 		}else{
 			return moveAlongRightWall(startBlock, goalBlock,
-					startDirection);
+					startOrientation);
 		}
 	
 		
@@ -41,27 +41,27 @@ public class CloseWallPathComputer extends FastestPathComputer {
 	}
 
 	private ArrayList<Action> moveAlongRightWall(Block startBlock,
-			Block goalBlock, Direction startDirection) {
+			Block goalBlock, Orientation startOrientation) {
 		ArrayList<Action> actions = new ArrayList<Action>();
 		Block currentBlock = new Block(startBlock.getRowID(), startBlock.getColID());
-		Direction currentDirection = startDirection.clone();
+		Orientation currentOrientation = startOrientation.clone();
 		
 		while(!currentBlock.equals(goalBlock)){
 			boolean moved = false;
 
-			Block rightBlock = currentBlock.toRightOf(currentDirection);
+			Block rightBlock = currentBlock.toRightOf(currentOrientation);
 			Integer rightCell = cellAtBlock(rightBlock);
 			if(rightCell != null && rightCell.equals(new Integer(0))){
 				actions.add(Action.TURN_RIGHT);
 				actions.add(Action.MOVE_FORWARD);
 				currentBlock = rightBlock;
-				currentDirection = currentDirection.relativeToRight();
+				currentOrientation = currentOrientation.relativeToRight();
 				moved = true;
 			}
 			
 			
 			if(!moved){
-				Block aheadBlock = currentBlock.aheadOf(currentDirection);
+				Block aheadBlock = currentBlock.aheadOf(currentOrientation);
 				Integer aheadCell = cellAtBlock(aheadBlock);
 				if(aheadCell != null && aheadCell.equals(new Integer(0))){
 					actions.add(Action.MOVE_FORWARD);
@@ -72,13 +72,13 @@ public class CloseWallPathComputer extends FastestPathComputer {
 			
 			if(!moved){
 
-				Block leftBlock = currentBlock.toLeftOf(currentDirection);
+				Block leftBlock = currentBlock.toLeftOf(currentOrientation);
 				Integer leftCell = cellAtBlock(leftBlock);
 				if(leftCell != null && leftCell.equals(new Integer(0))){
 					actions.add(Action.TURN_LEFT);
 					actions.add(Action.MOVE_FORWARD);
 					currentBlock = leftBlock;
-					currentDirection = currentDirection.relativeToLeft();
+					currentOrientation = currentOrientation.relativeToLeft();
 					moved = true;
 				}
 			}
@@ -86,8 +86,8 @@ public class CloseWallPathComputer extends FastestPathComputer {
 			if(!moved){
 				actions.add(Action.TURN_LEFT);
 				actions.add(Action.TURN_LEFT);
-				currentDirection = currentDirection.relativeToRight();
-				currentDirection = currentDirection.relativeToRight();
+				currentOrientation = currentOrientation.relativeToRight();
+				currentOrientation = currentOrientation.relativeToRight();
 			}
 			
 			
@@ -97,26 +97,26 @@ public class CloseWallPathComputer extends FastestPathComputer {
 	}
 
 	private ArrayList<Action> moveAlongLeftWall(Block startBlock, Block goalBlock,
-			Direction startDirection) {
+			Orientation startOrientation) {
 		ArrayList<Action> actions = new ArrayList<Action>();
 		Block currentBlock = new Block(startBlock.getRowID(), startBlock.getColID());
-		Direction currentDirection = startDirection.clone();
+		Orientation currentOrientation = startOrientation.clone();
 		
 		while(!currentBlock.equals(goalBlock)){
 			boolean moved = false;
 
-			Block leftBlock = currentBlock.toLeftOf(currentDirection);
+			Block leftBlock = currentBlock.toLeftOf(currentOrientation);
 			Integer leftCell = cellAtBlock(leftBlock);
 			if(leftCell != null && leftCell.equals(new Integer(0))){
 				actions.add(Action.TURN_LEFT);
 				actions.add(Action.MOVE_FORWARD);
 				currentBlock = leftBlock;
-				currentDirection = currentDirection.relativeToLeft();
+				currentOrientation = currentOrientation.relativeToLeft();
 				moved = true;
 			}
 			
 			if(!moved){
-				Block aheadBlock = currentBlock.aheadOf(currentDirection);
+				Block aheadBlock = currentBlock.aheadOf(currentOrientation);
 				Integer aheadCell = cellAtBlock(aheadBlock);
 				if(aheadCell != null && aheadCell.equals(new Integer(0))){
 					actions.add(Action.MOVE_FORWARD);
@@ -126,13 +126,13 @@ public class CloseWallPathComputer extends FastestPathComputer {
 			}
 			
 			if(!moved){
-				Block rightBlock = currentBlock.toRightOf(currentDirection);
+				Block rightBlock = currentBlock.toRightOf(currentOrientation);
 				Integer rightCell = cellAtBlock(rightBlock);
 				if(rightCell != null && rightCell.equals(new Integer(0))){
 					actions.add(Action.TURN_RIGHT);
 					actions.add(Action.MOVE_FORWARD);
 					currentBlock = rightBlock;
-					currentDirection = currentDirection.relativeToRight();
+					currentOrientation = currentOrientation.relativeToRight();
 					moved = true;
 				}
 			}
@@ -140,8 +140,8 @@ public class CloseWallPathComputer extends FastestPathComputer {
 			if(!moved){
 				actions.add(Action.TURN_RIGHT);
 				actions.add(Action.TURN_RIGHT);
-				currentDirection = currentDirection.relativeToRight();
-				currentDirection = currentDirection.relativeToRight();
+				currentOrientation = currentOrientation.relativeToRight();
+				currentOrientation = currentOrientation.relativeToRight();
 			}
 			
 			
