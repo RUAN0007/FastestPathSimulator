@@ -96,7 +96,7 @@ public class DFSPathComputer extends FastestPathComputer {
 	}
 
 
-	private boolean exploreAhead(Block currentBlock,
+	private boolean exploreRight(Block currentBlock,
 			Orientation currentOrientation, Block goalBlock) {
 		Block nextBlock = currentBlock.toRightOf(currentOrientation);
 		Orientation nextOrientation = currentOrientation.relativeToRight();
@@ -112,7 +112,7 @@ public class DFSPathComputer extends FastestPathComputer {
 		}
 	}
 
-	private boolean exploreRight(Block currentBlock,
+	private boolean exploreAhead(Block currentBlock,
 			Orientation currentOrientation, Block goalBlock) {
 		Block nextBlock = currentBlock.aheadOf(currentOrientation);
 		Orientation nextOrientation = currentOrientation.clone();
