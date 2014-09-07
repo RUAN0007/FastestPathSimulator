@@ -46,7 +46,6 @@ public class CustomizedArena {
 		try {
 			this.template.setArenaMapFromDescriptor(descriptor);
 		} catch (ArenaTemplateException e) {
-			// TODO Auto-generated catch block
 			throw new ArenaException(1,"The descriptor is invalid...");
 		}
 		if(unExploredCellExists()){

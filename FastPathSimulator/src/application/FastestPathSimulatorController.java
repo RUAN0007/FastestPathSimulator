@@ -192,11 +192,11 @@ public class FastestPathSimulatorController implements Initializable{
 			FastPathModel newModel;
 		try {
 			newModel = new FastPathModel(arena,
-										GlobalUtil.lowerLeftStartRowIndex,
-										GlobalUtil.lowerLeftStartColIndex,
+										GlobalUtil.southWestStartRowIndex,
+										GlobalUtil.southWestStartColIndex,
 										Orientation.NORTH,
-										GlobalUtil.lowerLeftGoalRowIndex,
-										GlobalUtil.lowerLeftGoalColIndex,
+										GlobalUtil.southWestGoalRowIndex,
+										GlobalUtil.southWestGoalColIndex,
 										GlobalUtil.robotDiameterInCellNumber,
 									//	new MinStepTurnPathComputer(1, 1)
 										new CloseWallPathComputer(Orientation.WEST)

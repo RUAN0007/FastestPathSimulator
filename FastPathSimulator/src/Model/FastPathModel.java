@@ -43,23 +43,23 @@ public class FastPathModel {
 	//FastestPath[action] has not yet be executed.
 	private int actionIndex = 0;
 	
-	private int lowerLeftGoalRowID;
-	private int lowerLeftGoalColID;
+	private int southWestGoalRowID;
+	private int southWestGoalColID;
 	
-	private int lowerLeftStartRowID;
-	private int lowerLeftStartColID;
+	private int southWestStartRowID;
+	private int southWestStartColID;
 	private Orientation startOrientation;
 		
 	private FastestPathComputer pathComputer;
 	
 	
 	public FastPathModel(CustomizedArena arenaMap, 
-						int lowerLeftStartRowID,
-						int lowerLeftStartColID,
+						int southWestStartRowID,
+						int southWestStartColID,
 						Orientation startOrientation,
 			
-						int lowerLeftGoalRowID,
-						int lowerLeftGoalColID, 
+						int southWestGoalRowID,
+						int southWestGoalColID, 
 						int robotDiameterInCellCount,
 						FastestPathComputer pathComputer) throws SimulatorException {
 		super();
@@ -67,36 +67,36 @@ public class FastPathModel {
 		
 		this.arenaMap = arenaMap;
 	
-		if(obstacleInArea(lowerLeftStartRowID,lowerLeftStartColID,robotDiameterInCellCount)){
+		if(obstacleInArea(southWestStartRowID,southWestStartColID,robotDiameterInCellCount)){
 			throw new SimulatorException(1, "There exists obstacle in the START position");
 		}
-		if(obstacleInArea(lowerLeftGoalRowID,lowerLeftGoalColID,robotDiameterInCellCount)){
+		if(obstacleInArea(southWestGoalRowID,southWestGoalColID,robotDiameterInCellCount)){
 			throw new SimulatorException(1, "There exists obstacle in the GOAL position");
 		}
 		
-		this.lowerLeftGoalRowID = lowerLeftGoalRowID;
-		this.lowerLeftGoalColID = lowerLeftGoalColID;
-		this.lowerLeftStartRowID = lowerLeftStartRowID;
-		this.lowerLeftStartColID = lowerLeftStartColID;
+		this.southWestGoalRowID = southWestGoalRowID;
+		this.southWestGoalColID = southWestGoalColID;
+		this.southWestStartRowID = southWestStartRowID;
+		this.southWestStartColID = southWestStartColID;
 		this.startOrientation = startOrientation;
 		
-		this.robot = new Robot(lowerLeftStartRowID, lowerLeftStartColID, robotDiameterInCellCount,startOrientation);
+		this.robot = new Robot(southWestStartRowID, southWestStartColID, robotDiameterInCellCount,startOrientation);
 		this.currentStatus = new Cell[arenaMap.getRowCount()][arenaMap.getColumnCount()];
 		
-		this.fastestPath = pathComputer.computeForFastestPath(arenaMap, robot, lowerLeftGoalRowID, lowerLeftGoalColID);
+		this.fastestPath = pathComputer.computeForFastestPath(arenaMap, robot, southWestGoalRowID, southWestGoalColID);
 		if(this.fastestPath == null){
 			throw new SimulatorException(2, "No Path can be found");
 		}
 		updateStatus();
 	}
 
-	private boolean obstacleInArea(int lowerLeftRowID,
-			int lowerLeftColID, int span) {
+	private boolean obstacleInArea(int southWestRowID,
+			int southWestColID, int span) {
 
 		for(int rowID = 0;rowID < span;rowID++){
 			for(int colID = 0;colID < span;colID++){
 				if(this.arenaMap.getCells()
-						[lowerLeftRowID - rowID][lowerLeftColID + colID] 
+						[southWestRowID - rowID][southWestColID + colID] 
 						== ArenaTemplate.CellState.OBSTACLE){
 					return true;
 				}
@@ -189,7 +189,7 @@ public class FastPathModel {
 		int robotDiameterInCellNum = this.robot.getDiameterInCellNum();
 		for(int rowID = 0; rowID < robotDiameterInCellNum; rowID++){
 			for(int colID = 0;colID < robotDiameterInCellNum; colID++){
-				this.currentStatus[lowerLeftGoalRowID - rowID][ lowerLeftGoalColID + colID]
+				this.currentStatus[southWestGoalRowID - rowID][ southWestGoalColID + colID]
 						= Cell.GOAL;
 			}
 		}
@@ -199,7 +199,7 @@ public class FastPathModel {
 		int robotDiameterInCellNum = this.robot.getDiameterInCellNum();
 		for(int rowID = 0; rowID < robotDiameterInCellNum; rowID++){
 			for(int colID = 0;colID < robotDiameterInCellNum; colID++){
-				this.currentStatus[lowerLeftStartRowID - rowID][lowerLeftStartColID + colID]
+				this.currentStatus[southWestStartRowID - rowID][southWestStartColID + colID]
 						= Cell.START;
 			}
 		}
@@ -207,8 +207,8 @@ public class FastPathModel {
 
 	private void updateForPath() {
 		Orientation orientation = this.startOrientation;
-		int lowerLeftRowID = this.lowerLeftStartRowID;
-		int lowerLeftColID = this.lowerLeftStartColID;
+		int southWestRowID = this.southWestStartRowID;
+		int southWestColID = this.southWestStartColID;
 		int robotDiameterInCellNum = this.robot.getDiameterInCellNum();
 		
 		for(int actID = 0;actID < this.actionIndex;actID++){
@@ -218,48 +218,48 @@ public class FastPathModel {
 					||(orientation.equals(Orientation.SOUTH) && act.equals(Action.DRAW_BACK))){
 				
 				//MOVE UPWARD
-				int rowID = lowerLeftRowID;
-				int colID = lowerLeftColID;
+				int rowID = southWestRowID;
+				int colID = southWestColID;
 				for(int offset = 0;offset < robotDiameterInCellNum; offset++){
 					this.currentStatus[rowID][colID + offset] =  Cell.PATH;
 				}
-				lowerLeftRowID--;
+				southWestRowID--;
 			}else if((orientation.equals(Orientation.NORTH) && act.equals(Action.DRAW_BACK))
 					||(orientation.equals(Orientation.SOUTH) && act.equals(Action.MOVE_FORWARD))){
 				
 				//MOVE DOWNWARD
 				//Draw the DIRECTION CELL at the top of robot
-				int rowID = lowerLeftRowID - robotDiameterInCellNum + 1;
-				int colID = lowerLeftColID;
+				int rowID = southWestRowID - robotDiameterInCellNum + 1;
+				int colID = southWestColID;
 
 				for(int offset = 0;offset < robotDiameterInCellNum; offset++){
 					this.currentStatus[rowID][colID + offset] =  Cell.PATH;
 				}
-				lowerLeftRowID++;
+				southWestRowID++;
 			}else if((orientation.equals(Orientation.WEST) && act.equals(Action.MOVE_FORWARD))
 					||(orientation.equals(Orientation.EAST) && act.equals(Action.DRAW_BACK))){
 				
 				//MOVE TO LEFT	
-				//Draw the path on right side of the robot
-				int rowID = lowerLeftRowID;
-				int colID = lowerLeftColID + robotDiameterInCellNum - 1;
+				//Draw the path on EAST side of the robot
+				int rowID = southWestRowID;
+				int colID = southWestColID + robotDiameterInCellNum - 1;
 
 				for(int offset = 0;offset < robotDiameterInCellNum; offset++){
 					this.currentStatus[rowID - offset][colID] =  Cell.PATH;
 				}
-				lowerLeftColID--;
+				southWestColID--;
 			}else if((orientation.equals(Orientation.WEST) && act.equals(Action.DRAW_BACK))
 					||(orientation.equals(Orientation.EAST) && act.equals(Action.MOVE_FORWARD))){
 				
 				//MOVE TO RIGHT	
-				//Draw the path on left side of the robot
-				int rowID = lowerLeftRowID;
-				int colID = lowerLeftColID;
+				//Draw the path on WEST side of the robot
+				int rowID = southWestRowID;
+				int colID = southWestColID;
 
 				for(int offset = 0;offset < robotDiameterInCellNum; offset++){
 					this.currentStatus[rowID - offset][colID] =  Cell.PATH;
 				}
-				lowerLeftColID++;
+				southWestColID++;
 			}
 			
 			orientation = act.orientationAfterAction(orientation);
@@ -358,8 +358,8 @@ public class FastPathModel {
 	
 	public void reset(){
 		this.robot.setCurrentOrientation(startOrientation);
-		this.robot.setLowerLeftRowIndex(lowerLeftStartRowID);
-		this.robot.setLowerLeftColIndex(lowerLeftStartColID);
+		this.robot.setLowerLeftRowIndex(southWestStartRowID);
+		this.robot.setLowerLeftColIndex(southWestStartColID);
 		this.actionIndex = 0;
 		this.updateStatus();
 	}

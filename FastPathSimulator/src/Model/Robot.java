@@ -2,36 +2,36 @@ package Model;
 
 public class Robot {
 	
-	private Block lowerLeftBlock;
+	private Block southWestBlock;
 	private int diameterInCellNum;
 	private Orientation currentOrientation;
 	
 	
 	
 	
-	public Robot(int lowerLeftRowIndex, int lowerLeftColIndex,
+	public Robot(int southWestRowIndex, int southWestColIndex,
 			int diameterInCellNum, Orientation currentOrientation) {
 		super();
-		this.lowerLeftBlock = new Block(lowerLeftRowIndex, lowerLeftColIndex);
+		this.southWestBlock = new Block(southWestRowIndex, southWestColIndex);
 		this.diameterInCellNum = diameterInCellNum;
 		this.currentOrientation = currentOrientation;
 	}
 	
 	
 	public int getLowerLeftRowIndex() {
-		return this.lowerLeftBlock.getRowID();
+		return this.southWestBlock.getRowID();
 	}
-	public void setLowerLeftRowIndex(int lowerLeftRowIndex) {
-		int lowerLeftcolID = this.lowerLeftBlock.getColID();
-		this.lowerLeftBlock = new Block(lowerLeftRowIndex, lowerLeftcolID);
+	public void setLowerLeftRowIndex(int southWestRowIndex) {
+		int southWestcolID = this.southWestBlock.getColID();
+		this.southWestBlock = new Block(southWestRowIndex, southWestcolID);
 	}
 	public int getLowerLeftColIndex() {
-		return this.lowerLeftBlock.getColID();
+		return this.southWestBlock.getColID();
 	}
 	
-	public void setLowerLeftColIndex(int lowerLeftColIndex) {
-		int lowerLeftRowID = this.lowerLeftBlock.getRowID();
-		this.lowerLeftBlock = new Block(lowerLeftRowID, lowerLeftColIndex);
+	public void setLowerLeftColIndex(int southWestColIndex) {
+		int southWestRowID = this.southWestBlock.getRowID();
+		this.southWestBlock = new Block(southWestRowID, southWestColIndex);
 	}
 	
 	public Orientation getCurrentOrientation() {
@@ -47,43 +47,43 @@ public class Robot {
 	@Override
 	public String toString(){
 		return "Robot:\n"
-				+"Lower Left Block: " + this.lowerLeftBlock.toString() + "\n"
+				+"South West Block: " + this.southWestBlock.toString() + "\n"
 				+"Diameter: " + this.diameterInCellNum + " Orientation: " + this.currentOrientation;
 	}
 	
 	public void move(Action act){
 		if(act.equals(Action.MOVE_FORWARD)){
-			this.lowerLeftBlock = this.lowerLeftBlock.aheadOf(currentOrientation);
+			this.southWestBlock = this.southWestBlock.aheadOf(currentOrientation);
 		}else if(act.equals(Action.DRAW_BACK)){
-			this.lowerLeftBlock = this.lowerLeftBlock.rearOf(currentOrientation);
+			this.southWestBlock = this.southWestBlock.rearOf(currentOrientation);
 
 		}
 		this.currentOrientation = act.orientationAfterAction(this.currentOrientation);
 
 		//		if(this.currentOrientation.equals(Orientation.LEFT)){
 //			if(act.equals(Action.MOVE_FORWARD)){
-//				this.lowerLeftColIndex--;
+//				this.southWestColIndex--;
 //			}else if(act.equals(Action.DRAW_BACK)){
-//				this.lowerLeftColIndex++;
+//				this.southWestColIndex++;
 //			}
 //		}else if(this.currentOrientation.equals(Orientation.RIGHT)){
 //			if(act.equals(Action.MOVE_FORWARD)){
-//				this.lowerLeftColIndex++;
+//				this.southWestColIndex++;
 //			}else if(act.equals(Action.DRAW_BACK)){
-//				this.lowerLeftColIndex--;
+//				this.southWestColIndex--;
 //			}
 //		}else if(this.currentOrientation.equals(Orientation.UP)){
 //			if(act.equals(Action.MOVE_FORWARD)){
-//				this.lowerLeftRowIndex--;
+//				this.southWestRowIndex--;
 //			}else if(act.equals(Action.DRAW_BACK)){
-//				this.lowerLeftRowIndex++;
+//				this.southWestRowIndex++;
 //			}
 //		}else{
 //			//Current Orientation is DOWN
 //			if(act.equals(Action.MOVE_FORWARD)){
-//				this.lowerLeftRowIndex++;
+//				this.southWestRowIndex++;
 //			}else if(act.equals(Action.DRAW_BACK)){
-//				this.lowerLeftRowIndex--;
+//				this.southWestRowIndex--;
 //			}
 //		}
 	}

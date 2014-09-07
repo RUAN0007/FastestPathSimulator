@@ -15,11 +15,11 @@ public class GlobalUtil {
 	public static int columnCount = 15;
 	public static int robotDiameterInCellNumber = 3;
 	
-	public static int lowerLeftStartRowIndex = rowCount - 1;
-	public static int lowerLeftStartColIndex = 0;
+	public static int southWestStartRowIndex = rowCount - 1;
+	public static int southWestStartColIndex = 0;
 	
-	public static int lowerLeftGoalRowIndex = robotDiameterInCellNumber - 1;
-	public static int lowerLeftGoalColIndex = columnCount - robotDiameterInCellNumber;
+	public static int southWestGoalRowIndex = robotDiameterInCellNumber - 1;
+	public static int southWestGoalColIndex = columnCount - robotDiameterInCellNumber;
 	
 	public static int indexFont = rowCount / 2;
 	

@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 public class MinStepTurnPathComputer extends FastestPathComputer {
 	
-	private static int DIR_NULL = -1;
-	private static int DIR_MIN = 0;
-	private static int UP_INDEX = 0;
-	private static int RIGHT_INDEX = 1;
-	private static int DOWN_INDEX = 2;
-	private static int LEFT_INDEX = 3;
-	private static int DIR_MAX = 3;
+	private static int OREIT_NULL = -1;
+	private static int OREIT_MIN = 0;
+	private static int NORTH_INDEX = 0;
+	private static int WEST_INDEX = 1;
+	private static int SOUTH_INDEX = 2;
+	private static int EAST_INDEX = 3;
+	private static int OREIT_MAX = 3;
 	
 	
 	
@@ -45,12 +45,12 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 		
 		int startDrcID = IndexOfOrientation(startOrientation);
 		distance[startRowID][startColID][startDrcID] = 0;
-		int goalDrcID = DIR_NULL;
+		int goalDrcID = OREIT_NULL;
 		while(true){
 			
 			 this.minRowID = -1;
 			 this.minColID = -1;
-			 this.minDrcID = DIR_NULL;
+			 this.minDrcID = OREIT_NULL;
 			 this.minDist = Integer.MAX_VALUE;
 			
 			if(!findUnexploredCellWithDist(rowCount, colCount)) return null;
@@ -60,17 +60,17 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 			explored[minRowID][minColID][minDrcID] = true;
 			
 			goalDrcID = minDistGoalDrcID(goalRowID, goalColID);
-			if(goalDrcID != DIR_NULL) break;
+			if(goalDrcID != OREIT_NULL) break;
 			
 			
 			//Update its three adjacent node
 			
-			int leftOrientationID = (minDrcID + DIR_MAX) % (DIR_MAX + 1);
+			int leftOrientationID = (minDrcID + OREIT_MAX) % (OREIT_MAX + 1);
 			if(updateNodeDist(minRowID,minColID,leftOrientationID,turnWeight)){
 				preAction[minRowID][minColID][leftOrientationID] = Action.TURN_LEFT;				
 			};
 			
-			int rightOrientationID = (minDrcID + 1) % (DIR_MAX + 1);
+			int rightOrientationID = (minDrcID + 1) % (OREIT_MAX + 1);
 			if(updateNodeDist(minRowID,minColID,rightOrientationID,turnWeight)){
 				preAction[minRowID][minColID][rightOrientationID] = Action.TURN_RIGHT;				
 			};
@@ -79,11 +79,11 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 			int adjacentRowID = minRowID;
 			int adjacentColID = minColID;
 			
-			if(minDrcID == UP_INDEX){
+			if(minDrcID == NORTH_INDEX){
 				adjacentRowID--;
-			}else if(minDrcID == DOWN_INDEX){
+			}else if(minDrcID == SOUTH_INDEX){
 				adjacentRowID++;
-			}else if(minDrcID == LEFT_INDEX){
+			}else if(minDrcID == EAST_INDEX){
 				adjacentColID--;
 			}else{
 				//RIGHT Orientation
@@ -100,7 +100,7 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 		}// END of infinite WHILE
 		
 		
-		for(int drcID = DIR_MIN;drcID <= DIR_MAX;drcID ++){
+		for(int drcID = OREIT_MIN;drcID <= OREIT_MAX;drcID ++){
 			assert(explored[goalRowID][goalColID][drcID]);
 			assert(preAction[goalRowID][goalColID][drcID] != null);
 		}//END of loop on orientation		
@@ -140,11 +140,11 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 
 	private int minDistGoalDrcID(int goalRowID, int goalColID) {
 		//All the orientations at goal state has been explored
-		int goalDrcID = DIR_NULL;
+		int goalDrcID = OREIT_NULL;
 		int minDistForDrcOnGoal = Integer.MAX_VALUE;
-		for(int drcID = DIR_MIN;drcID <= DIR_MAX;drcID ++){
+		for(int drcID = OREIT_MIN;drcID <= OREIT_MAX;drcID ++){
 			if(!explored[goalRowID][goalColID][drcID]){
-				goalDrcID = DIR_NULL;
+				goalDrcID = OREIT_NULL;
 				break;
 			}else{
 				if(distance[goalRowID][goalColID][drcID] < minDistForDrcOnGoal){
@@ -164,7 +164,7 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 		boolean foundMin = false;
 		 for(int rowID = 0;rowID < rowCount ; rowID++){
 			for(int colID = 0;colID < colCount;colID++){
-				for(int drcID = DIR_MIN;drcID <= DIR_MAX;drcID ++){
+				for(int drcID = OREIT_MIN;drcID <= OREIT_MAX;drcID ++){
 					if(!explored[rowID][colID][drcID] && 
 							distance[rowID][colID][drcID] < minDist){
 						minRowID = rowID;
@@ -193,7 +193,7 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 				if(map[rowID][colID].equals(new Integer(1))){
 					isObstacle = true;
 				}
-				for(int drcID = DIR_MIN;drcID <= DIR_MAX;drcID ++){
+				for(int drcID = OREIT_MIN;drcID <= OREIT_MAX;drcID ++){
 					distance[rowID][colID][drcID] = Integer.MAX_VALUE;
 					preAction[rowID][colID][drcID] = null;
 					explored[rowID][colID][drcID] = isObstacle;
@@ -222,18 +222,18 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 			Action currentAction = preAction[rowID][colID][drcID];
 			actions.add(0, currentAction);
 			if(currentAction.equals(Action.TURN_LEFT)){
-				 drcID = (drcID + 1) % (DIR_MAX + 1);
+				 drcID = (drcID + 1) % (OREIT_MAX + 1);
 
 			}else if(currentAction.equals(Action.TURN_RIGHT)){
-				drcID = (drcID + DIR_MAX) % (DIR_MAX + 1);
+				drcID = (drcID + OREIT_MAX) % (OREIT_MAX + 1);
 
 			}else{
 				//currentAction == MOVE_FORWARD
-				if(drcID == UP_INDEX){
+				if(drcID == NORTH_INDEX){
 					rowID++;
-				}else if(drcID == DOWN_INDEX){
+				}else if(drcID == SOUTH_INDEX){
 					rowID--;
-				}else if(drcID == LEFT_INDEX){
+				}else if(drcID == EAST_INDEX){
 					colID++;
 				}else{
 					//RIGHT Orientation
@@ -251,14 +251,14 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 
 	private static int IndexOfOrientation(Orientation orientation){
 		if(orientation.equals(Orientation.NORTH)){
-			return UP_INDEX;
+			return NORTH_INDEX;
 		}else if(orientation.equals(Orientation.EAST)){
-			return RIGHT_INDEX;
+			return WEST_INDEX;
 		}else if(orientation.equals(Orientation.SOUTH)){
-			return DOWN_INDEX;
+			return SOUTH_INDEX;
 		}else{
 			//LEFT DIRECTION
-			return LEFT_INDEX;
+			return EAST_INDEX;
 		}
 	}
 
