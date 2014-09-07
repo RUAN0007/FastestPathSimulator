@@ -28,7 +28,8 @@ public class PathComputerTest {
 		map[3][2] = new Integer(1);
 		map[3][3] = new Integer(1);
 
-		MinStepTurnPathComputer pathComputer = new MinStepTurnPathComputer(1, 1);
+		//MinStepTurnPathComputer pathComputer = new MinStepTurnPathComputer(1, 1);
+		CloseWallPathComputer pathComputer = new CloseWallPathComputer(null);
 		ArrayList<Action> actions = pathComputer.compute(map, rowCount, colCount,
 														rowCount - 1, 0, Direction.UP, 
 														0, colCount - 1);
