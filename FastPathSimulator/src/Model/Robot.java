@@ -60,32 +60,6 @@ public class Robot {
 		}
 		this.currentOrientation = act.orientationAfterAction(this.currentOrientation);
 
-		//		if(this.currentOrientation.equals(Orientation.LEFT)){
-//			if(act.equals(Action.MOVE_FORWARD)){
-//				this.southWestColIndex--;
-//			}else if(act.equals(Action.DRAW_BACK)){
-//				this.southWestColIndex++;
-//			}
-//		}else if(this.currentOrientation.equals(Orientation.RIGHT)){
-//			if(act.equals(Action.MOVE_FORWARD)){
-//				this.southWestColIndex++;
-//			}else if(act.equals(Action.DRAW_BACK)){
-//				this.southWestColIndex--;
-//			}
-//		}else if(this.currentOrientation.equals(Orientation.UP)){
-//			if(act.equals(Action.MOVE_FORWARD)){
-//				this.southWestRowIndex--;
-//			}else if(act.equals(Action.DRAW_BACK)){
-//				this.southWestRowIndex++;
-//			}
-//		}else{
-//			//Current Orientation is DOWN
-//			if(act.equals(Action.MOVE_FORWARD)){
-//				this.southWestRowIndex++;
-//			}else if(act.equals(Action.DRAW_BACK)){
-//				this.southWestRowIndex--;
-//			}
-//		}
 	}
 	 
 	

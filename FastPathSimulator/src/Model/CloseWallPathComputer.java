@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 public class CloseWallPathComputer extends FastestPathComputer {
 	
-	private Orientation robotSideOnObstacle;
+	private Direction preferedDirection;
 	private Integer[][] map;
 	private int rowCount;
 	private int colCount;
 	
-	public CloseWallPathComputer(Orientation robotSideOnObstacle) {
+	public CloseWallPathComputer(Direction preferedDirection) {
 		super();
-		this.robotSideOnObstacle = robotSideOnObstacle;
+		this.preferedDirection = preferedDirection;
 	}
 
 	@Override
@@ -28,14 +28,16 @@ public class CloseWallPathComputer extends FastestPathComputer {
 		Block goalBlock = new Block(goalRowID,goalColID);
 
 		
-		if(this.robotSideOnObstacle.equals(Orientation.WEST)){
+		if(this.preferedDirection == Direction.LEFT){
 			return moveAlongLeftWall(startBlock, goalBlock,
 					startOrientation);
-		}else{
+		}else if(this.preferedDirection == Direction.RIGHT){
 			return moveAlongRightWall(startBlock, goalBlock,
 					startOrientation);
+		}else{
+			assert(false):"Should never reach here";
 		}
-	
+		return null;
 		
 		
 	}

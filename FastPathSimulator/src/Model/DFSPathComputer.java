@@ -10,12 +10,22 @@ public class DFSPathComputer extends FastestPathComputer {
 	private int rowCount;
 	private int colCount;
 	
-	private Orientation preferedOrientation;
+	private Direction firstChoice;
+	private Direction secondChoice;
+	private Direction thirdChoice;
 	
-	public DFSPathComputer(Orientation preOrientation){
-		this.preferedOrientation = preOrientation;
+	public DFSPathComputer(Direction firstChoice, Direction secondChoice,
+			Direction thirdChoice) {
+		super();
+		assert(!firstChoice.equals(secondChoice));
+		assert(!firstChoice.equals(thirdChoice));
+		assert(!secondChoice.equals(thirdChoice));
+
+		this.firstChoice = firstChoice;
+		this.secondChoice = secondChoice;
+		this.thirdChoice = thirdChoice;
 	}
-	
+
 	@Override
 	public ArrayList<Action> compute(Integer[][] map, int rowCount,
 			int colCount, int startRowID, int startColID,
@@ -54,68 +64,37 @@ public class DFSPathComputer extends FastestPathComputer {
 		
 		this.setExplored(currentBlock);
 		
-		if(this.preferedOrientation.equals(Orientation.WEST)){
-			return exploreFromLeftToRight(currentBlock, currentOrientation,
-					goalBlock);
-		}else if(this.preferedOrientation.equals(Orientation.EAST)){
-			return exploreFromRightToLeft(currentBlock, currentOrientation,
-					goalBlock);	
-		}else if(this.preferedOrientation.equals(Orientation.NORTH)){
-			//Explore From From Top, then left and finally right
-			return exploreFromAheadLeftRight(currentBlock, currentOrientation,
-					goalBlock);	
+		if(exploreOnDirection(firstChoice, currentBlock, currentOrientation, goalBlock)){
+			return true;
+		}
+		
+		if(exploreOnDirection(secondChoice, currentBlock, currentOrientation, goalBlock)){
+			return true;
+		}
+		
+		if(exploreOnDirection(thirdChoice, currentBlock, currentOrientation, goalBlock)){
+			return true;
+		}
+		
+		return false;
+		
+		
+	}
+	
+	private boolean exploreOnDirection(Direction drc,Block currentBlock,
+			Orientation currentOrientation, Block goalBlock){
+		if(drc == Direction.LEFT){
+			return exploreLeft(currentBlock, currentOrientation, goalBlock);
+		}else if(drc == Direction.RIGHT){
+			return exploreRight(currentBlock, currentOrientation, goalBlock);
+		}else if(drc == Direction.AHEAD){
+			return exploreAhead(currentBlock, currentOrientation, goalBlock);
 		}else{
 			assert(false):"Should not reach here";
 		}
-		
-		
-		return false;
-		
-		
-	}
-
-	private boolean exploreFromLeftToRight(Block currentBlock,
-			Orientation currentOrientation, Block goalBlock) {
-		
-		
-		
-		if(exploreLeft(currentBlock, currentOrientation, goalBlock)) return true;
-		
-		if( exploreAhead(currentBlock, currentOrientation, goalBlock)) return true;
-		if(exploreRight(currentBlock, currentOrientation, goalBlock)) return true;
-
 		return false;
 	}
-	
-	private boolean exploreFromAheadLeftRight(Block currentBlock,
-			Orientation currentOrientation, Block goalBlock) {
-		
-		
-		if(exploreAhead(currentBlock, currentOrientation, goalBlock)) return true;
 
-		if(exploreLeft(currentBlock, currentOrientation, goalBlock)) return true;
-		
-		if(exploreRight(currentBlock, currentOrientation, goalBlock)) return true;
-
-		return false;
-	}
-	
-	private boolean exploreFromRightToLeft(Block currentBlock,
-			Orientation currentOrientation, Block goalBlock) {
-		
-		
-		
-		
-		if(exploreRight(currentBlock, currentOrientation, goalBlock)) return true;
-		
-		if( exploreAhead(currentBlock, currentOrientation, goalBlock)) return true;
-		if(exploreLeft(currentBlock, currentOrientation, goalBlock)) return true;
-
-		return false;
-	}
-	
-	
-	
 
 	private boolean exploreAhead(Block currentBlock,
 			Orientation currentOrientation, Block goalBlock) {
