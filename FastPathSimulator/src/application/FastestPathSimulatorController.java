@@ -11,6 +11,7 @@ import java.util.TimerTask;
 
 import Model.CustomizedArena;
 import Model.CustomizedArena.ArenaException;
+import Model.CloseWallPathComputer;
 import Model.Direction;
 import Model.FastPathModel;
 import Model.FastPathModel.Cell;
@@ -197,7 +198,8 @@ public class FastestPathSimulatorController implements Initializable{
 										GlobalUtil.lowerLeftGoalRowIndex,
 										GlobalUtil.lowerLeftGoalColIndex,
 										GlobalUtil.robotDiameterInCellNumber,
-										new MinStepTurnPathComputer(1, 1)
+									//	new MinStepTurnPathComputer(1, 1)
+										new CloseWallPathComputer(Direction.LEFT)
 										);
 			this.model = newModel;
 

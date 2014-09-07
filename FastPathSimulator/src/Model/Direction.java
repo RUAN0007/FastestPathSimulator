@@ -50,4 +50,8 @@ public class Direction {
 	public Direction toOppsite(){
 		return new Direction((this.dirSymbol - DirectionCount / 2) % DirectionCount);		
 	}
+	
+	public Direction clone(){
+		return new Direction(this.dirSymbol);
+	}
 }

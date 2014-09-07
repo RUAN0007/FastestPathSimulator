@@ -2,8 +2,6 @@ package Model;
 
 import java.util.ArrayList;
 
-import org.omg.CORBA.Current;
-
 public class CloseWallPathComputer extends FastestPathComputer {
 	
 	private Direction robotSideOnObstacle;
@@ -29,8 +27,6 @@ public class CloseWallPathComputer extends FastestPathComputer {
 		Block startBlock = new Block(startRowID, startColID);
 		Block goalBlock = new Block(goalRowID,goalColID);
 
-		Block currentBlock = new Block(startRowID, startColID);
-		Direction currentDirection = startDirection;
 		
 		if(this.robotSideOnObstacle.equals(Direction.LEFT)){
 			return moveAlongLeftWall(startBlock, goalBlock,
