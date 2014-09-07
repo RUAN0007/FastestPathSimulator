@@ -18,110 +18,64 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 	private int stepWeight;
 	
 	
+	
+	
 	public MinStepTurnPathComputer(int turnWeight, int stepWeight) {
 		super();
 		this.turnWeight = turnWeight;
 		this.stepWeight = stepWeight;
 	}
 
-
+	private int distance[][][];
+	private Action preAction[][][];
+	private boolean explored[][][];
+	
+	private int minRowID ;
+	private int minColID;
+	private int minDrcID;
+	private int minDist;
+	
 
 	@Override
 	public ArrayList<Action> compute(Integer[][] map, int rowCount, int colCount,
 			int startRowID, int startColID, Direction startDirection,
 			int goalRowID, int goalColID) {
-//		Integer mapWithDrc[][][] = new Integer[rowCount][colCount][Direction.DirectionCount];
-		int distance[][][] = new int[rowCount][colCount][Direction.DirectionCount];
-		Action preAction[][][] = new Action[rowCount][colCount][Direction.DirectionCount];
-		boolean explored[][][] = new boolean[rowCount][colCount][Direction.DirectionCount];
 		
-		for(int rowID = 0;rowID < rowCount ; rowID++){
-			for(int colID = 0;colID < colCount;colID++){
-				boolean isObstacle = false;
-				if(map[rowID][colID].equals(new Integer(1))){
-					isObstacle = true;
-				}
-				for(int drcID = DIR_MIN;drcID <= DIR_MAX;drcID ++){
-					distance[rowID][colID][drcID] = Integer.MAX_VALUE;
-					preAction[rowID][colID][drcID] = null;
-					explored[rowID][colID][drcID] = isObstacle;
-					
-				}//END of loop on direction
-			}// END of loop on columns
-		}//End of loop on rows
+		 initDataStructure(map, rowCount, colCount);
 		
 		int startDrcID = IndexOfDirection(startDirection);
 		distance[startRowID][startColID][startDrcID] = 0;
 		int goalDrcID = DIR_NULL;
 		while(true){
-			int minRowID = -1;
-			int minColID = -1;
-			int minDrcID = DIR_NULL;
-			int minDist = Integer.MAX_VALUE;
-			boolean foundMin = false;
 			
-			for(int rowID = 0;rowID < rowCount ; rowID++){
-				for(int colID = 0;colID < colCount;colID++){
-					for(int drcID = DIR_MIN;drcID <= DIR_MAX;drcID ++){
-						if(!explored[rowID][colID][drcID] && 
-								distance[rowID][colID][drcID] < minDist){
-							minRowID = rowID;
-							minColID = colID;
-							minDrcID = drcID;
-							minDist = distance[rowID][colID][drcID];
-							foundMin = true;
-						}
-					}//END of loop on direction
-				}// END of loop on columns
-			}//End of loop on rows
+			 this.minRowID = -1;
+			 this.minColID = -1;
+			 this.minDrcID = DIR_NULL;
+			 this.minDist = Integer.MAX_VALUE;
 			
-
-			if(!foundMin) return null;
+			if(!findUnexploredCellWithDist(rowCount, colCount)) return null;
+			
 			
 			assert(!explored[minRowID][minColID][minDrcID]);
 			explored[minRowID][minColID][minDrcID] = true;
-			//All the directions at goal state has been explored
-			int minDistForDrcOnGoal = Integer.MAX_VALUE;
-			for(int drcID = DIR_MIN;drcID <= DIR_MAX;drcID ++){
-				if(!explored[goalRowID][goalColID][drcID]){
-					goalDrcID = DIR_NULL;
-					break;
-				}else{
-					if(distance[goalRowID][goalColID][drcID] < minDistForDrcOnGoal){
-						minDistForDrcOnGoal = distance[goalRowID][goalColID][drcID];
-						goalDrcID = drcID;
-					}
-				}
-				
-			}//END of loop on direction
+			
+			goalDrcID = minDistGoalDrcID(goalRowID, goalColID);
 			if(goalDrcID != DIR_NULL) break;
 			
 			
 			//Update its three adjacent node
 			
-			//Update the first adjacent node
 			int leftDirectionID = (minDrcID + DIR_MAX) % (DIR_MAX + 1);
-			if(!explored[minRowID][minColID][leftDirectionID] &&
-					distance[minRowID][minColID][leftDirectionID]
-							> distance[minRowID][minColID][minDrcID] + turnWeight){
-				
-				distance[minRowID][minColID][leftDirectionID] 
-						= distance[minRowID][minColID][minDrcID] + turnWeight;
+			if(updateNodeDist(minRowID,minColID,leftDirectionID,turnWeight)){
 				preAction[minRowID][minColID][leftDirectionID] = Action.TURN_LEFT;				
-			}
+			};
 			
-			//Update the second adjacent node
 			int rightDirectionID = (minDrcID + 1) % (DIR_MAX + 1);
-			if(!explored[minRowID][minColID][rightDirectionID] &&
-					distance[minRowID][minColID][rightDirectionID]
-							> distance[minRowID][minColID][minDrcID] + turnWeight){
-				
-				distance[minRowID][minColID][rightDirectionID] 
-						= distance[minRowID][minColID][minDrcID] + turnWeight;
+			if(updateNodeDist(minRowID,minColID,rightDirectionID,turnWeight)){
 				preAction[minRowID][minColID][rightDirectionID] = Action.TURN_RIGHT;				
-			}
+			};
 			
-			//Update the third adjacent node
+			
 			int adjacentRowID = minRowID;
 			int adjacentColID = minColID;
 			
@@ -137,13 +91,9 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 			}
 			if(0 <= adjacentRowID && adjacentRowID < rowCount &&
 					0 <= adjacentColID && adjacentColID < colCount){
-				if(!explored[adjacentRowID][adjacentColID][minDrcID] &&
-						distance[adjacentRowID][adjacentColID][minDrcID] >
-							distance[minRowID][minColID][minDrcID] + stepWeight){
-					distance[adjacentRowID][adjacentColID][minDrcID] =
-							distance[minRowID][minColID][minDrcID] + stepWeight;
-					preAction[adjacentRowID][adjacentColID][minDrcID] = Action.MOVE_FORWARD;
-				}
+				if(updateNodeDist(adjacentRowID,adjacentColID,minDrcID,stepWeight)){
+					preAction[adjacentRowID][adjacentColID][minDrcID] = Action.MOVE_FORWARD;				
+				};
 			}
 			
 
@@ -158,7 +108,7 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 		
 		
 		
-		return findPathsFromActionMap(preAction,
+		return findPathsFromActionMap(
 									goalRowID,
 									goalColID,
 									goalDrcID
@@ -168,13 +118,97 @@ public class MinStepTurnPathComputer extends FastestPathComputer {
 									);
 		
 	}
+
+
+
+	//Each cell has 4 direction nodes. 
+	//Return whether the update the applicable
+	private boolean updateNodeDist(int rowID,int colID, int drcID, int weight) {
+		if(!explored[rowID][colID][drcID] &&
+				distance[rowID][colID][drcID]
+						> distance[minRowID][minColID][minDrcID] + weight){
+			
+			distance[rowID][colID][drcID]
+					= distance[minRowID][minColID][minDrcID] + weight;
+			return true;
+		}
+		return false;
+	}
+
+
+
+
+	private int minDistGoalDrcID(int goalRowID, int goalColID) {
+		//All the directions at goal state has been explored
+		int goalDrcID = DIR_NULL;
+		int minDistForDrcOnGoal = Integer.MAX_VALUE;
+		for(int drcID = DIR_MIN;drcID <= DIR_MAX;drcID ++){
+			if(!explored[goalRowID][goalColID][drcID]){
+				goalDrcID = DIR_NULL;
+				break;
+			}else{
+				if(distance[goalRowID][goalColID][drcID] < minDistForDrcOnGoal){
+					minDistForDrcOnGoal = distance[goalRowID][goalColID][drcID];
+					goalDrcID = drcID;
+				}
+			}
+			
+		}//END of loop on direction
+		return goalDrcID;
+	}
+
+
+
+
+	private boolean findUnexploredCellWithDist(int rowCount, int colCount) {
+		boolean foundMin = false;
+		 for(int rowID = 0;rowID < rowCount ; rowID++){
+			for(int colID = 0;colID < colCount;colID++){
+				for(int drcID = DIR_MIN;drcID <= DIR_MAX;drcID ++){
+					if(!explored[rowID][colID][drcID] && 
+							distance[rowID][colID][drcID] < minDist){
+						minRowID = rowID;
+						minColID = colID;
+						minDrcID = drcID;
+						minDist = distance[rowID][colID][drcID];
+						foundMin = true;
+					}
+				}//END of loop on direction
+			}// END of loop on columns
+		}//End of loop on rows
+		return foundMin;
+	}
+
+
+
+
+	private void initDataStructure(Integer[][] map, int rowCount, int colCount) {
+		distance = new int[rowCount][colCount][Direction.DirectionCount];
+		 preAction = new Action[rowCount][colCount][Direction.DirectionCount];
+		 explored = new boolean[rowCount][colCount][Direction.DirectionCount];
+		
+		for(int rowID = 0;rowID < rowCount ; rowID++){
+			for(int colID = 0;colID < colCount;colID++){
+				boolean isObstacle = false;
+				if(map[rowID][colID].equals(new Integer(1))){
+					isObstacle = true;
+				}
+				for(int drcID = DIR_MIN;drcID <= DIR_MAX;drcID ++){
+					distance[rowID][colID][drcID] = Integer.MAX_VALUE;
+					preAction[rowID][colID][drcID] = null;
+					explored[rowID][colID][drcID] = isObstacle;
+					
+				}//END of loop on direction
+			}// END of loop on columns
+		}//End of loop on rows
+	}
 	
 	
 
 
 	//TODO
 	//Remove the last three parameters for testing
-	private ArrayList<Action> findPathsFromActionMap(Action[][][] preAction,
+	private ArrayList<Action> findPathsFromActionMap(
 			int goalRowID, int goalColID, int goalDrcID) {
 			//int startRowID,int startColID,int startDrcID) {
 		
