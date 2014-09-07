@@ -94,5 +94,9 @@ public class Block {
 		return this.rowID == b.rowID && this.colID == b.colID;
 	}
 	
+	@Override
+	public String toString(){
+		return "RowID: " + rowID + " ColID: " + colID;
+	}
 	
 }
