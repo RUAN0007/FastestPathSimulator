@@ -101,5 +101,7 @@
          </font>
       </Label>
       <ChoiceBox fx:id="secondsPerStepChoiceBox" layoutX="702.0" layoutY="479.0" prefHeight="26.0" prefWidth="67.0" />
+      <ChoiceBox fx:id="algoChoiceBox" layoutX="596.0" layoutY="305.0" prefHeight="26.0" prefWidth="169.0" />
+      <Label alignment="CENTER" layoutX="549.0" layoutY="305.0" prefHeight="26.0" prefWidth="50.0" text="Algo:" textAlignment="CENTER" />
    </children>
 </AnchorPane>

@@ -38,6 +38,7 @@ public class FastPathModel {
 	private Robot robot;
 	private Cell[][] currentStatus;
 	
+	
 	private ArrayList<Action> fastestPath = new ArrayList<>();
 	//All the action from 0 to actionIndex - 1 has been executed.
 	//FastestPath[action] has not yet be executed.
@@ -360,6 +361,18 @@ public class FastPathModel {
 		this.robot.setLowerLeftColIndex(southWestStartColID);
 		this.actionIndex = 0;
 		this.updateStatus();
+	}
+	
+	public boolean setPathComputer(FastestPathComputer pathComputer){
+		this.reset();
+		ArrayList<Action> actions = pathComputer.computeForFastestPath(arenaMap, robot, southWestGoalRowID, southWestGoalColID);
+		if(actions != null){
+			this.fastestPath = actions;
+			return true;
+		}else{
+			return false;
+		}
+
 	}
 	
 }

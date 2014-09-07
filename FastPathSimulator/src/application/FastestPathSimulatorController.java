@@ -14,12 +14,15 @@ import Model.CustomizedArena.ArenaException;
 import Model.CloseWallPathComputer;
 import Model.DFSPathComputer;
 import Model.Direction;
+import Model.FastestPathComputer;
 import Model.Orientation;
 import Model.FastPathModel;
+import Model.PathComputerTest;
 import Model.FastPathModel.Cell;
 import Model.FastPathModel.SimulatorException;
 import Model.MinStepTurnPathComputer;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -42,6 +45,9 @@ import javafx.stage.Stage;
 
 public class FastestPathSimulatorController implements Initializable{
 
+	private static final String ALGO3 = "Min Step(1) + Turn(1)";
+	private static final String ALGO2 = "DFS:Left,Ahead,Right";
+	private static final String ALGO1 = "Along the wall:Left";
 	private static Color OBSTACLE_COLOR = Color.BLACK;
 	private static Color EMPTY_COLOR = Color.WHITE;
 	private static Color ROBOT_COLOR = Color.BLUE;
@@ -92,6 +98,9 @@ public class FastestPathSimulatorController implements Initializable{
 	@FXML
 	ChoiceBox<String> secondsPerStepChoiceBox;
 	
+	@FXML
+	ChoiceBox<String> algoChoiceBox;
+	
 	FastPathModel model = null;
 	
 	private Stage stage;
@@ -107,15 +116,40 @@ public class FastestPathSimulatorController implements Initializable{
 		forwardButton.setDisable(true);
 		backwardButton.setDisable(true);
 		resetButton.setDisable(true);
+		secondsPerStepChoiceBox.setDisable(true);
+		algoChoiceBox.setDisable(true);
 		
 		secondsPerStepChoiceBox.getItems().add("0.5");
 		secondsPerStepChoiceBox.getItems().add("1");
 		secondsPerStepChoiceBox.getItems().add("2");
-
 		secondsPerStepChoiceBox.setValue("1");
+		
+		algoChoiceBox.getItems().add(ALGO1);
+		algoChoiceBox.getItems().add(ALGO2);
+		algoChoiceBox.getItems().add(ALGO3);
+		algoChoiceBox.setValue(ALGO1);
+		algoChoiceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			public void changed(javafx.beans.value.ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				model.setPathComputer(getSelectedPathComputer());
+				refleshView();
+			};
+		});
 		addBlocks();
 	}
 	
+	private FastestPathComputer getSelectedPathComputer(){
+		String text = this.algoChoiceBox.getValue();
+		if(text.equals(ALGO1)){
+			return new CloseWallPathComputer(Direction.LEFT);
+		}else if(text.equals(ALGO2)){
+			return new DFSPathComputer(Direction.LEFT, Direction.AHEAD, Direction.RIGHT);
+		}else if(text.equals(ALGO3)){
+			return new MinStepTurnPathComputer(1, 1);
+		}else{
+			assert(false):"Should not reach here";
+		}
+		return null;
+	}
 	
 	private void addBlocks() {
 		recs = new Rectangle[GlobalUtil.rowCount][GlobalUtil.columnCount];
@@ -171,7 +205,7 @@ public class FastestPathSimulatorController implements Initializable{
 		
 	}
 
-
+	
 
 	@FXML
 	public void onDescriptorLoaded(){
@@ -200,9 +234,10 @@ public class FastestPathSimulatorController implements Initializable{
 										GlobalUtil.southWestGoalRowIndex,
 										GlobalUtil.southWestGoalColIndex,
 										GlobalUtil.robotDiameterInCellNumber,
+										getSelectedPathComputer()
 										//new MinStepTurnPathComputer(1, 1)
 									//	new CloseWallPathComputer(Direction.LEFT)
-										new DFSPathComputer(Direction.LEFT, Direction.AHEAD, Direction.RIGHT)
+										//new DFSPathComputer(Direction.LEFT, Direction.AHEAD, Direction.RIGHT)
 										);
 			this.model = newModel;
 
@@ -214,6 +249,9 @@ public class FastestPathSimulatorController implements Initializable{
 		this.startpausedButton.setDisable(false);
 		this.forwardButton.setDisable(false);
 		this.resetButton.setDisable(false);
+		this.secondsPerStepChoiceBox.setDisable(false);
+		this.algoChoiceBox.setDisable(false);
+
 		this.msgLabel.setText("Start");
 		refleshView();
 		
