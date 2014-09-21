@@ -1,6 +1,7 @@
 package Model;
 
 import Model.ArenaTemplate.ArenaTemplateException;
+import Model.ArenaTemplate.CellState;
 
 public class CustomizedArena {
 	
@@ -100,6 +101,26 @@ public class CustomizedArena {
 		}
 		
 		return false;
+	}
+	
+	public String getDescriptors(){
+		this.mapCustomizedToTemplate();
+		return this.template.retrieveArenaDescriptor();
+	}
+
+
+
+	private void mapCustomizedToTemplate() {
+		int rowScale = this.rowCount / this.template.getRowCount();
+		int colScale = this.columnCount / this.template.getColumnCount();
+		for (int templateRowID = 0;templateRowID < this.template.getRowCount();templateRowID++){
+			for(int templateColID = 0;templateColID < this.template.getColumnCount();templateColID++){
+				int rowID = rowScale * templateRowID;
+				int colID = colScale * templateColID;
+				CellState cellState = this.cells[rowID][colID];
+				this.template.setCellState(templateRowID, templateRowID, cellState);
+			}
+		}
 	}
 	
 	
