@@ -56,7 +56,6 @@ public class CustomizedArena {
 	}
 	
 	private void mapTemplateToCustomized() {
-		// TODO Auto-generated method stub
 		int rowScale = this.rowCount / this.template.getRowCount();
 		int colScale = this.columnCount / this.template.getColumnCount();
 		

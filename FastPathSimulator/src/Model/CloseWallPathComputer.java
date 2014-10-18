@@ -48,6 +48,8 @@ public class CloseWallPathComputer extends FastestPathComputer {
 		Block currentBlock = new Block(startBlock.getRowID(), startBlock.getColID());
 		Orientation currentOrientation = startOrientation.clone();
 		
+		
+		
 		while(!currentBlock.equals(goalBlock)){
 			boolean moved = false;
 
